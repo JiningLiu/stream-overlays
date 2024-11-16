@@ -111,8 +111,19 @@
 			this.timerRunning = true;
 			this.remainingTime = this.timerStates[this.currentStateIndex];
 			this.startTime = performance.now();
-			mode = 'AUTO';
-			beforeTeleop = true;
+			switch (this.currentStateIndex) {
+				case 0:
+					mode = 'AUTO';
+					beforeTeleop = true;
+					break;
+				case 1:
+					mode = 'WAIT';
+					beforeTeleop = true;
+					break;
+				case 2:
+					mode = 'TELEOP';
+					beforeTeleop = false;
+			}
 			this.tick();
 		}
 
@@ -148,20 +159,6 @@
 				mode = 'JUDGING';
 				beforeTeleop = false;
 				return;
-			}
-
-			switch (this.currentStateIndex) {
-				case 0:
-					mode = 'AUTO';
-					beforeTeleop = true;
-					break;
-				case 1:
-					mode = 'WAIT';
-					beforeTeleop = true;
-					break;
-				case 2:
-					mode = 'TELEOP';
-					beforeTeleop = false;
 			}
 			this.timerRunning = false;
 			this.start();
