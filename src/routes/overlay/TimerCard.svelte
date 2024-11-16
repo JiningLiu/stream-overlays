@@ -45,7 +45,7 @@
 	h2 {
 		max-width: 8vw;
 		font-size: 3.5vw;
-		font-weight: 550;
+		font-weight: 700;
 		font-variant-numeric: tabular-nums;
 	}
 
@@ -53,7 +53,7 @@
 		max-width: 8vw;
 		margin-top: -0.2vw;
 		font-size: 1.1vw;
-		font-weight: 550;
+		font-weight: 700;
 		transform: scaleX(1.2);
 		display: inline-block;
 	}

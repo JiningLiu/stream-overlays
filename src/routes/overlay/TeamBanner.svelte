@@ -23,21 +23,27 @@
 <container class={alliance}>
 	<div class="hstack">
 		{#if alliance === 'red'}
-			<div id="rankStack" class="vstack">
-				<h3 class="rankMove {rankMove == "UP" ? 'up' : 'dn'}">􀆇</h3>
-				<h3 class="rank">{leagueRank}</h3>
-				<h3 class="rankMove {rankMove == "DOWN" ? 'down' : 'dn'}">􀆈</h3>
-			</div>
+			{#if +leagueRank > 0}
+				<div id="rankStack" class="vstack">
+					<h3 class="rankMove {rankMove == 'UP' ? 'up' : 'dn'}">􀆇</h3>
+					<h3 class="rank">{leagueRank}</h3>
+					<h3 class="rankMove {rankMove == 'DOWN' ? 'down' : 'dn'}">􀆈</h3>
+				</div>
+			{/if}
+
 			<h3 data-team-name={teamName} class="name">{teamName}</h3>
 		{/if}
 		<h3 class="number">{teamNumber}</h3>
 		{#if alliance !== 'red'}
 			<h3 data-team-name={teamName} class="name">{teamName}</h3>
-			<div id="rankStack" class="vstack">
-				<h3 class="rankMove {rankMove == "UP" ? 'up' : 'dn'}">􀆇</h3>
-				<h3 class="rank">{leagueRank}</h3>
-				<h3 class="rankMove {rankMove == "DOWN" ? 'down' : 'dn'}">􀆈</h3>
-			</div>
+
+			{#if +leagueRank > 0}
+				<div id="rankStack" class="vstack">
+					<h3 class="rankMove {rankMove == 'UP' ? 'up' : 'dn'}">􀆇</h3>
+					<h3 class="rank">{leagueRank}</h3>
+					<h3 class="rankMove {rankMove == 'DOWN' ? 'down' : 'dn'}">􀆈</h3>
+				</div>
+			{/if}
 		{/if}
 	</div>
 </container>

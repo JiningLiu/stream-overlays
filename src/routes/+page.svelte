@@ -111,6 +111,8 @@
 			this.timerRunning = true;
 			this.remainingTime = this.timerStates[this.currentStateIndex];
 			this.startTime = performance.now();
+			mode = 'AUTO';
+			beforeTeleop = true;
 			this.tick();
 		}
 
@@ -315,8 +317,8 @@
 </script>
 
 <main>
-	<overlay>
-		<div id="top" class="hstack s64 {showResults ? "hidden" : ""}">
+	<overlay class={showResults ? 'hidden' : ''}>
+		<div id="top" class="hstack s64 {showResults ? 'hidden' : ''}">
 			<div class="hstack s8">
 				<ScoreBadge
 					alliance="blue"
@@ -400,17 +402,17 @@
 					alliance="blue"
 					teamNumber={data.params?.blue?.teams?.[0]?.number}
 					teamName={data.params?.blue?.teams?.[0]?.name}
-					rank={data.params?.red?.teams?.[0]?.ranking?.toString()}
-					leagueRank={data.params?.red?.teams?.[0]?.leagueRanking?.toString()}
-					rankMove={data.params?.red?.teams?.[0]?.rankMove}
+					rank={data.params?.blue?.teams?.[0]?.ranking?.toString()}
+					leagueRank={data.params?.blue?.teams?.[0]?.leagueRanking?.toString()}
+					rankMove={data.params?.blue?.teams?.[0]?.rankMove}
 				/>
 				<TeamBanner
 					alliance="blue"
 					teamNumber={data.params?.blue?.teams?.[1]?.number}
 					teamName={data.params?.blue?.teams?.[1]?.name}
-					rank={data.params?.red?.teams?.[1]?.ranking?.toString()}
-					leagueRank={data.params?.red?.teams?.[1]?.leagueRanking?.toString()}
-					rankMove={data.params?.red?.teams?.[1]?.rankMove}
+					rank={data.params?.blue?.teams?.[1]?.ranking?.toString()}
+					leagueRank={data.params?.blue?.teams?.[1]?.leagueRanking?.toString()}
+					rankMove={data.params?.blue?.teams?.[1]?.rankMove}
 				/>
 			</div>
 
@@ -420,7 +422,9 @@
 					<TotalScoreCard
 						alliance="blue"
 						score={(
-							((beforeTeleop ? (data.params?.blueScores?.autoPoints) : (data.params?.blueScores?.preFoulTotal)) || 0) +
+							((beforeTeleop
+								? data.params?.blueScores?.autoPoints
+								: data.params?.blueScores?.preFoulTotal) || 0) +
 							(data.params?.redScores?.foulPointsCommitted || 0)
 						).toString()}
 					/>
@@ -428,7 +432,9 @@
 					<TotalScoreCard
 						alliance="red"
 						score={(
-							((beforeTeleop ? (data.params?.redScores?.autoPoints) : (data.params?.redScores?.preFoulTotal)) || 0) +
+							((beforeTeleop
+								? data.params?.redScores?.autoPoints
+								: data.params?.redScores?.preFoulTotal) || 0) +
 							(data.params?.blueScores?.foulPointsCommitted || 0)
 						).toString()}
 					/>
@@ -459,7 +465,7 @@
 	</overlay>
 
 	<results>
-		<div class="vstack s16 vcenter {showResults ? "" : "hidden"}">
+		<div class="vstack s16 vcenter {showResults ? '' : 'hidden'}">
 			<ResultsInfoBanner text="{infoBannerText}{data.params?.matchName}" />
 
 			<div class="vstack s12 vcenter">
