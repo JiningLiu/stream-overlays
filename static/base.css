@@ -1,0 +1,104 @@
+@font-face {
+	font-family: 'SF Pro';
+	src: url('/fonts/SF-Pro.ttf') format('truetype');
+}
+
+body {
+	margin: 0;
+	padding: 0;
+	font-family:
+		'SF Pro',
+		-apple-system,
+		BlinkMacSystemFont,
+		sans-serif;
+	background-color: rgba(0, 0, 0, 0);
+}
+
+main,
+overlay,
+results {
+	position: absolute;
+	top: calc((100vh - (100vw / 16 * 9)) / 4);
+	width: 100vw;
+	height: calc(100vw / 16 * 9);
+	margin: 0;
+	padding: 0;
+	display: flex;
+	align-items: center;
+	justify-content: center;
+}
+
+* {
+	transition: all 0.5s;
+}
+
+h1,
+h2,
+h3,
+h4,
+h5,
+h6,
+span,
+p {
+	margin: 0;
+	padding: 0;
+}
+
+.vstack {
+	display: flex;
+	flex-direction: column;
+}
+
+.hstack {
+	display: flex;
+	flex-direction: row;
+}
+
+.zstack {
+	position: relative;
+	display: flex;
+	justify-content: center;
+	align-items: center;
+}
+
+.vcenter {
+	align-items: center;
+}
+
+.hcenter {
+	justify-content: center;
+}
+
+.vgrid {
+	display: grid;
+	grid-auto-flow: row;
+	grid-auto-rows: max-content;
+	align-items: center;
+}
+
+.hgrid {
+	display: grid;
+	grid-auto-flow: column;
+	grid-auto-columns: max-content;
+	align-items: center;
+}
+
+.s8 {
+	gap: 0.5vw;
+}
+
+.s12 {
+	gap: 0.75vw;
+}
+
+.s16 {
+	gap: 1vw;
+}
+
+.s64 {
+	gap: 4vw;
+}
+
+.dn {
+	display: none;
+}
