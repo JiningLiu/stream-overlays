@@ -475,17 +475,17 @@
 							alliance="blue"
 							teamNumber={data.params?.blue?.teams?.[0]?.number}
 							teamName={data.params?.blue?.teams?.[0]?.name}
-							rank={data.params?.red?.teams?.[0]?.ranking?.toString()}
-							leagueRank={data.params?.red?.teams?.[0]?.leagueRanking?.toString()}
-							rankMove={data.params?.red?.teams?.[0]?.rankMove}
+							rank={data.params?.blue?.teams?.[0]?.ranking?.toString()}
+							leagueRank={data.params?.blue?.teams?.[0]?.leagueRanking?.toString()}
+							rankMove={data.params?.blue?.teams?.[0]?.rankMove}
 						/>
 						<ResultsTeamBanner
 							alliance="blue"
 							teamNumber={data.params?.blue?.teams?.[1]?.number}
 							teamName={data.params?.blue?.teams?.[1]?.name}
-							rank={data.params?.red?.teams?.[1]?.ranking?.toString()}
-							leagueRank={data.params?.red?.teams?.[1]?.leagueRanking?.toString()}
-							rankMove={data.params?.red?.teams?.[1]?.rankMove}
+							rank={data.params?.blue?.teams?.[1]?.ranking?.toString()}
+							leagueRank={data.params?.blue?.teams?.[1]?.leagueRanking?.toString()}
+							rankMove={data.params?.blue?.teams?.[1]?.rankMove}
 						/>
 					</div>
 
