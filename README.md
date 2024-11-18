@@ -4,7 +4,7 @@ For use with the [stream-cam](https://github.com/JiningLiu/stream-cam/) project 
 
 ## Developing
 
-Once you've installed dependencies with `bun install`, start a development server:
+Once you've installed dependencies with `npm i`, start a development server:
 
 ```bash
 npm run dev
@@ -20,7 +20,7 @@ The port is exposed by default with the `--host` flag.
 To create a production version of the app:
 
 ```bash
-bun run build
+npm run build
 ```
 
-You can preview the production build with `bun run preview`.
+You can preview the production build with `npm run preview`.
