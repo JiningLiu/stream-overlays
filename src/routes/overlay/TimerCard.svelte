@@ -31,9 +31,9 @@
 		height: 6.5vw;
 		margin: 0;
 		color: #000;
-		background-color: #fff;
+		background-color: #eee;
 		border-radius: 0.8vw;
-		box-shadow: 0 0 2vw 0.2vw rgba(0, 0, 0, 0.25);
+		box-shadow: 0 0 2vw 0.2vw rgba(0, 0, 0, 0.5);
 	}
 
 	div {
@@ -53,7 +53,7 @@
 		max-width: 8vw;
 		margin-top: -0.2vw;
 		font-size: 1.1vw;
-		font-weight: 700;
+		font-weight: 800;
 		transform: scaleX(1.2);
 		display: inline-block;
 	}

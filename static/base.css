@@ -29,7 +29,7 @@ results {
 }
 
 * {
-	transition: all 0.5s;
+	transition: all 0.5s ease-in-out;
 }
 
 h1,
@@ -101,4 +101,18 @@ p {
 
 .dn {
 	display: none;
+}
+
+pos {
+	position: absolute;
+	left: var(--x, 50%);
+	top: var(--y, 50%);
+}
+
+.w-100 {
+	width: 100%;
+}
+
+.vscale0 {
+	transform: scaleY(0);
 }

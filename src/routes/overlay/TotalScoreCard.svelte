@@ -17,8 +17,8 @@
 		width: 12vw;
 		height: 6.5vw;
 		margin: 0;
-		color: white;
-		box-shadow: 0 0 2vw 0.2vw rgba(0, 0, 0, 0.25);
+		color: #fff;
+		box-shadow: 0 0 2vw 0.2vw rgba(0, 0, 0, 0.5);
 	}
 
 	.blue {
@@ -34,11 +34,10 @@
 	h1 {
 		max-width: 10vw;
 		margin: 0.5vw 1vw;
-		font-size: 3.8vw;
+		font-size: 4vw;
 		font-weight: 600;
 		font-variant-numeric: tabular-nums;
 		transform: scaleX(1.2);
-		letter-spacing: -0.1vw;
 		display: inline-block;
 	}
 </style>

@@ -47,16 +47,16 @@
 	container {
 		display: flex;
 		align-items: center;
-		width: 22vw;
-		height: 3.2vw;
+		width: 24vw;
+		height: 3vw;
 		margin: 0;
-		color: white;
+		color: #fff;
 		border-radius: 0.8vw;
-		box-shadow: 0 0 2vw 0.2vw rgba(0, 0, 0, 0.25);
+		box-shadow: 0 0 2vw 0.2vw rgba(0, 0, 0, 0.5);
 
 		div {
-			width: 20vw;
-			height: 2vw;
+			width: 22vw;
+			height: 1.8vw;
 			align-items: center;
 			margin: 0.6vw 1vw;
 			width: 100%;
@@ -111,7 +111,7 @@
 	}
 
 	.name {
-		font-size: clamp(0.6vw, calc(11.5vw / var(--char-count, 16) * 3.2), 1.2vw);
+		font-size: clamp(0.6vw, calc(13.5vw / var(--char-count, 16) * 3.4), 1.2vw);
 		font-weight: 300;
 		width: 100%;
 	}

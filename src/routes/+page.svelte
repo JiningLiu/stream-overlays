@@ -8,10 +8,7 @@
 	import ResultsInfoBanner from './results/ResultsInfoBanner.svelte';
 	import ResultsTeamBanner from './results/ResultsTeamBanner.svelte';
 	import ResultsTotalScoreCard from './results/ResultsTotalScoreCard.svelte';
-	import ResultsScoreBadge from './results/ResultsScoreBadge.svelte';
-	import ResultsLocationBadge from './results/ResultsLocationBadge.svelte';
-	import ResultsScoreSectionTitle from './results/ResultsScoreSectionTitle.svelte';
-	import ResultsScoreElementText from './results/ResultsScoreElementText.svelte';
+	import ResultsScoreBreakdown from './results/ResultsScoreBreakdown.svelte';
 
 	import { onMount } from 'svelte';
 
@@ -171,88 +168,8 @@
 		}
 	}
 
-	let data: GameUpdate = {
-		type: '',
-		params: {
-			liveScoringComplete: false,
-			someLocked: false,
-			redScores: {
-				robot1Auto: undefined,
-				robot2Auto: undefined,
-				autoSampleNet: undefined,
-				autoSampleLow: undefined,
-				autoSampleHigh: undefined,
-				autoSpecimenLow: undefined,
-				autoSpecimenHigh: undefined,
-				teleopSampleNet: undefined,
-				teleopSampleLow: undefined,
-				teleopSampleHigh: undefined,
-				teleopSpecimenLow: undefined,
-				teleopSpecimenHigh: undefined,
-				robot1Teleop: undefined,
-				robot2Teleop: undefined,
-				minorFouls: undefined,
-				majorFouls: undefined,
-				autoSamplePoints: undefined,
-				autoSpecimenPoints: undefined,
-				autoParkPoints: undefined,
-				autoAscentPoints: undefined,
-				teleopSamplePoints: undefined,
-				teleopSpecimenPoints: undefined,
-				teleopParkPoints: undefined,
-				teleopAscentPoints: undefined,
-				autoPoints: undefined,
-				teleopPoints: undefined,
-				foulPointsCommitted: undefined,
-				preFoulTotal: undefined,
-				adjust: undefined
-			},
-			blueScores: {
-				robot1Auto: undefined,
-				robot2Auto: undefined,
-				autoSampleNet: undefined,
-				autoSampleLow: undefined,
-				autoSampleHigh: undefined,
-				autoSpecimenLow: undefined,
-				autoSpecimenHigh: undefined,
-				teleopSampleNet: undefined,
-				teleopSampleLow: undefined,
-				teleopSampleHigh: undefined,
-				teleopSpecimenLow: undefined,
-				teleopSpecimenHigh: undefined,
-				robot1Teleop: undefined,
-				robot2Teleop: undefined,
-				minorFouls: undefined,
-				majorFouls: undefined,
-				autoSamplePoints: undefined,
-				autoSpecimenPoints: undefined,
-				autoParkPoints: undefined,
-				autoAscentPoints: undefined,
-				teleopSamplePoints: undefined,
-				teleopSpecimenPoints: undefined,
-				teleopParkPoints: undefined,
-				teleopAscentPoints: undefined,
-				autoPoints: undefined,
-				teleopPoints: undefined,
-				foulPointsCommitted: undefined,
-				preFoulTotal: undefined,
-				adjust: undefined
-			},
-			hrReview: undefined,
-			number: undefined,
-			series: undefined,
-			displayNumber: undefined,
-			matchName: undefined,
-			field: undefined,
-			elims: undefined,
-			red: {},
-			blue: {},
-			singleTeam: undefined
-		},
-		field: undefined,
-		init: undefined,
-		ts: undefined
-	};
+	let data: GameUpdate | undefined;
+	let resultsData: GameUpdate | undefined;
 
 	let time = 0;
 	let mode = 'STANDBY';
@@ -266,7 +183,72 @@
 	let socket: WebSocket;
 	onMount(() => {
 		const params = new URLSearchParams(location.search);
-		infoBannerText = params.get('infoBannerText') + ' • ';
+
+		const suppliedInfoBannerText = params.get('infoBannerText');
+		if (suppliedInfoBannerText) {
+			infoBannerText = suppliedInfoBannerText + ' • ';
+		}
+
+		const blueSampleNet = document.getElementById('blueSampleNet');
+		if (blueSampleNet) {
+			blueSampleNet.style.setProperty('--x', params.get('blueSampleNetX'));
+			blueSampleNet.style.setProperty('--y', params.get('blueSampleNetY'));
+		}
+
+		const blueSampleLow = document.getElementById('blueSampleLow');
+		if (blueSampleLow) {
+			blueSampleLow.style.setProperty('--x', params.get('blueSampleLowX'));
+			blueSampleLow.style.setProperty('--y', params.get('blueSampleLowY'));
+		}
+
+		const blueSampleHigh = document.getElementById('blueSampleHigh');
+		if (blueSampleHigh) {
+			blueSampleHigh.style.setProperty('--x', params.get('blueSampleHighX'));
+			blueSampleHigh.style.setProperty('--y', params.get('blueSampleHighY'));
+		}
+
+		const blueSpecimenLow = document.getElementById('blueSpecimenLow');
+		if (blueSpecimenLow) {
+			blueSpecimenLow.style.setProperty('--x', params.get('blueSpecimenLowX'));
+			blueSpecimenLow.style.setProperty('--y', params.get('blueSpecimenLowY'));
+		}
+
+		const blueSpecimenHigh = document.getElementById('blueSpecimenHigh');
+		if (blueSpecimenHigh) {
+			blueSpecimenHigh.style.setProperty('--x', params.get('blueSpecimenHighX'));
+			blueSpecimenHigh.style.setProperty('--y', params.get('blueSpecimenHighY'));
+		}
+
+		const redSampleNet = document.getElementById('redSampleNet');
+		if (redSampleNet) {
+			redSampleNet.style.setProperty('--x', params.get('redSampleNetX'));
+			redSampleNet.style.setProperty('--y', params.get('redSampleNetY'));
+		}
+
+		const redSampleLow = document.getElementById('redSampleLow');
+		if (redSampleLow) {
+			redSampleLow.style.setProperty('--x', params.get('redSampleLowX'));
+			redSampleLow.style.setProperty('--y', params.get('redSampleLowY'));
+		}
+
+		const redSampleHigh = document.getElementById('redSampleHigh');
+		if (redSampleHigh) {
+			redSampleHigh.style.setProperty('--x', params.get('redSampleHighX'));
+			redSampleHigh.style.setProperty('--y', params.get('redSampleHighY'));
+		}
+
+		const redSpecimenLow = document.getElementById('redSpecimenLow');
+		if (redSpecimenLow) {
+			redSpecimenLow.style.setProperty('--x', params.get('redSpecimenLowX'));
+			redSpecimenLow.style.setProperty('--y', params.get('redSpecimenLowY'));
+		}
+
+		const redSpecimenHigh = document.getElementById('redSpecimenHigh');
+		if (redSpecimenHigh) {
+			redSpecimenHigh.style.setProperty('--x', params.get('redSpecimenHighX'));
+			redSpecimenHigh.style.setProperty('--y', params.get('redSpecimenHighY'));
+		}
+
 		const socketUrl = params.get('socketUrl');
 		if (socketUrl) {
 			socket = new WebSocket(socketUrl);
@@ -276,22 +258,38 @@
 			};
 
 			socket.onmessage = (event) => {
-				if (processingTypes.includes(JSON.parse(event.data).type)) {
-					data = JSON.parse(event.data);
-					if (data.type === 'SHOW_RESULTS') {
+				const parsed = JSON.parse(event.data);
+				if (processingTypes.includes(parsed.type)) {
+					if (parsed.type === 'SHOW_RESULTS') {
+						resultsData = JSON.parse(event.data);
 						timer.abort();
 						time = 30;
 						mode = 'STANDBY';
 						beforeTeleop = false;
 						showResults = true;
+
+						if (data?.type === 'SHOW_PREVIEW' || data?.type === 'SHOW_MATCH') {
+							data.type = '';
+						}
 						return;
-					} else if (data.type === 'START_MATCH') {
+					}
+
+					data = JSON.parse(event.data);
+
+					if (data?.type === 'START_MATCH') {
 						timer.reset();
 						timer.start();
-					} else if (data.type === 'ABORT_MATCH') {
+						resultsData = undefined;
+					} else if (data?.type === 'ABORT_MATCH') {
 						timer.abort();
 						mode = 'ABORTED';
-					} else if (['SHOW_PREVIEW', 'SHOW_MATCH'].includes(data.type || '')) {
+					} else if (data?.type === 'SHOW_PREVIEW') {
+						timer.abort();
+						time = 30;
+						mode = 'STANDBY';
+						beforeTeleop = true;
+						return;
+					} else if (data?.type == 'SHOW_MATCH') {
 						timer.abort();
 						time = 30;
 						mode = 'STANDBY';
@@ -315,114 +313,128 @@
 
 <main>
 	<overlay class={showResults ? 'hidden' : ''}>
-		<div id="top" class="hstack s64 {showResults ? 'hidden' : ''}">
-			<div class="hstack s8">
-				<ScoreBadge
-					alliance="blue"
-					order="0"
-					type="2"
-					pos="0"
-					score={data.params?.blueScores?.teleopSampleNet?.toString()}
-				/>
-				<ScoreBadge
-					alliance="blue"
-					order="0"
-					type="0"
-					pos="1"
-					score={data.params?.blueScores?.teleopSampleLow?.toString()}
-				/>
-				<ScoreBadge
-					alliance="blue"
-					order="0"
-					type="0"
-					pos="0"
-					score={data.params?.blueScores?.teleopSampleHigh?.toString()}
-				/>
-				<ScoreBadge
-					alliance="blue"
-					order="0"
-					type="1"
-					pos="1"
-					score={data.params?.blueScores?.teleopSpecimenLow?.toString()}
-				/>
-				<ScoreBadge
-					alliance="blue"
-					order="0"
-					type="1"
-					pos="0"
-					score={data.params?.blueScores?.teleopSpecimenHigh?.toString()}
-				/>
-			</div>
+		<pos id="blueSampleNet">
+			<ScoreBadge
+				alliance="blue"
+				order="0"
+				type="2"
+				pos="1"
+				score={data?.params?.blueScores?.teleopSampleNet?.toString()}
+			/>
+		</pos>
+		<pos id="blueSampleLow">
+			<ScoreBadge
+				alliance="blue"
+				order="0"
+				type="0"
+				pos="1"
+				score={data?.params?.blueScores?.teleopSampleLow?.toString()}
+			/>
+		</pos>
+		<pos id="blueSampleHigh">
+			<ScoreBadge
+				alliance="blue"
+				order="0"
+				type="0"
+				pos="0"
+				score={data?.params?.blueScores?.teleopSampleHigh?.toString()}
+			/>
+		</pos>
+		<pos id="blueSpecimenLow">
+			<ScoreBadge
+				alliance="blue"
+				order="0"
+				type="1"
+				pos="1"
+				score={data?.params?.blueScores?.teleopSpecimenLow?.toString()}
+			/>
+		</pos>
+		<pos id="blueSpecimenHigh">
+			<ScoreBadge
+				alliance="blue"
+				order="0"
+				type="1"
+				pos="0"
+				score={data?.params?.blueScores?.teleopSpecimenHigh?.toString()}
+			/>
+		</pos>
 
-			<div class="hstack s8">
-				<ScoreBadge
-					alliance="red"
-					order="1"
-					type="2"
-					pos="0"
-					score={data.params?.redScores?.teleopSampleNet?.toString()}
-				/>
-				<ScoreBadge
-					alliance="red"
-					order="1"
-					type="0"
-					pos="1"
-					score={data.params?.redScores?.teleopSampleLow?.toString()}
-				/>
-				<ScoreBadge
-					alliance="red"
-					order="1"
-					type="0"
-					pos="0"
-					score={data.params?.redScores?.teleopSampleHigh?.toString()}
-				/>
-				<ScoreBadge
-					alliance="red"
-					order="1"
-					type="1"
-					pos="1"
-					score={data.params?.redScores?.teleopSpecimenLow?.toString()}
-				/>
-				<ScoreBadge
-					alliance="red"
-					order="1"
-					type="1"
-					pos="0"
-					score={data.params?.redScores?.teleopSpecimenHigh?.toString()}
-				/>
-			</div>
-		</div>
+		<pos id="redSampleNet">
+			<ScoreBadge
+				alliance="red"
+				order="1"
+				type="2"
+				pos="0"
+				score={data?.params?.redScores?.teleopSampleNet?.toString()}
+			/>
+		</pos>
+		<pos id="redSampleLow">
+			<ScoreBadge
+				alliance="red"
+				order="1"
+				type="0"
+				pos="1"
+				score={data?.params?.redScores?.teleopSampleLow?.toString()}
+			/>
+		</pos>
+		<pos id="redSampleHigh">
+			<ScoreBadge
+				alliance="red"
+				order="1"
+				type="0"
+				pos="0"
+				score={data?.params?.redScores?.teleopSampleHigh?.toString()}
+			/>
+		</pos>
+		<pos id="redSpecimenLow">
+			<ScoreBadge
+				alliance="red"
+				order="1"
+				type="1"
+				pos="1"
+				score={data?.params?.redScores?.teleopSpecimenLow?.toString()}
+			/>
+		</pos>
+		<pos id="redSpecimenHigh">
+			<ScoreBadge
+				alliance="red"
+				order="1"
+				type="1"
+				pos="0"
+				score={data?.params?.redScores?.teleopSpecimenHigh?.toString()}
+			/>
+		</pos>
 
 		<div id="bottom" class="hgrid s12">
 			<div class="vgrid s8">
 				<TeamBanner
 					alliance="blue"
-					teamNumber={data.params?.blue?.teams?.[0]?.number}
-					teamName={data.params?.blue?.teams?.[0]?.name}
-					rank={data.params?.blue?.teams?.[0]?.ranking?.toString()}
-					leagueRank={data.params?.blue?.teams?.[0]?.leagueRanking?.toString()}
-					rankMove={data.params?.blue?.teams?.[0]?.rankMove}
+					teamNumber={data?.params?.blue?.teams?.[0]?.number}
+					teamName={data?.params?.blue?.teams?.[0]?.name}
+					rank={data?.params?.blue?.teams?.[0]?.ranking?.toString()}
+					leagueRank={data?.params?.blue?.teams?.[0]?.leagueRanking?.toString()}
+					rankMove={data?.params?.blue?.teams?.[0]?.rankMove}
 				/>
 				<TeamBanner
 					alliance="blue"
-					teamNumber={data.params?.blue?.teams?.[1]?.number}
-					teamName={data.params?.blue?.teams?.[1]?.name}
-					rank={data.params?.blue?.teams?.[1]?.ranking?.toString()}
-					leagueRank={data.params?.blue?.teams?.[1]?.leagueRanking?.toString()}
-					rankMove={data.params?.blue?.teams?.[1]?.rankMove}
+					teamNumber={data?.params?.blue?.teams?.[1]?.number}
+					teamName={data?.params?.blue?.teams?.[1]?.name}
+					rank={data?.params?.blue?.teams?.[1]?.ranking?.toString()}
+					leagueRank={data?.params?.blue?.teams?.[1]?.leagueRanking?.toString()}
+					rankMove={data?.params?.blue?.teams?.[1]?.rankMove}
 				/>
 			</div>
 
 			<div class="vgrid s12">
-				<InfoBanner text="{infoBannerText}{data.params?.matchName}" />
+				<InfoBanner text="{infoBannerText}{data?.params?.matchName}" />
 				<div class="hgrid s12">
 					<TotalScoreCard
 						alliance="blue"
 						score={(
 							((beforeTeleop
-								? data.params?.blueScores?.autoPoints
-								: data.params?.blueScores?.preFoulTotal) || 0) +
-							(data.params?.redScores?.foulPointsCommitted || 0)
+								? data?.params?.blueScores?.autoPoints
+								: data?.params?.blueScores?.preFoulTotal) || 0) +
+							(data?.params?.redScores?.foulPointsCommitted || 0)
 						).toString()}
 					/>
 					<TimerCard timer={time.toString()} {mode} />
@@ -430,9 +442,9 @@
 						alliance="red"
 						score={(
 							((beforeTeleop
-								? data.params?.redScores?.autoPoints
-								: data.params?.redScores?.preFoulTotal) || 0) +
-							(data.params?.blueScores?.foulPointsCommitted || 0)
+								? data?.params?.redScores?.autoPoints
+								: data?.params?.redScores?.preFoulTotal) || 0) +
+							(data?.params?.blueScores?.foulPointsCommitted || 0)
 						).toString()}
 					/>
 				</div>
@@ -441,19 +453,19 @@
 			<div class="vgrid s8">
 				<TeamBanner
 					alliance="red"
-					teamNumber={data.params?.red?.teams?.[0]?.number}
-					teamName={data.params?.red?.teams?.[0]?.name}
-					rank={data.params?.red?.teams?.[0]?.ranking?.toString()}
-					leagueRank={data.params?.red?.teams?.[0]?.leagueRanking?.toString()}
-					rankMove={data.params?.red?.teams?.[0]?.rankMove}
+					teamNumber={data?.params?.red?.teams?.[0]?.number}
+					teamName={data?.params?.red?.teams?.[0]?.name}
+					rank={data?.params?.red?.teams?.[0]?.ranking?.toString()}
+					leagueRank={data?.params?.red?.teams?.[0]?.leagueRanking?.toString()}
+					rankMove={data?.params?.red?.teams?.[0]?.rankMove}
 				/>
 				<TeamBanner
 					alliance="red"
-					teamNumber={data.params?.red?.teams?.[1]?.number}
-					teamName={data.params?.red?.teams?.[1]?.name}
-					rank={data.params?.red?.teams?.[1]?.ranking?.toString()}
-					leagueRank={data.params?.red?.teams?.[1]?.leagueRanking?.toString()}
-					rankMove={data.params?.red?.teams?.[1]?.rankMove}
+					teamNumber={data?.params?.red?.teams?.[1]?.number}
+					teamName={data?.params?.red?.teams?.[1]?.name}
+					rank={data?.params?.red?.teams?.[1]?.ranking?.toString()}
+					leagueRank={data?.params?.red?.teams?.[1]?.leagueRanking?.toString()}
+					rankMove={data?.params?.red?.teams?.[1]?.rankMove}
 				/>
 			</div>
 		</div>
@@ -461,372 +473,151 @@
 		<shadow-rect></shadow-rect>
 	</overlay>
 
-	<results>
-		<div class="vstack s16 vcenter {showResults ? '' : 'hidden'}">
-			<ResultsInfoBanner text="{infoBannerText}{data.params?.matchName}" />
+	<results class="{showResults ? '' : 'hidden'} {(data?.type == 'SHOW_PREVIEW' || data?.type == 'SHOW_MATCH') ? '' : 'mt2'}">
+		<div class="vstack vcenter s64">
+			<div class="results vstack s16 vcenter">
+				<ResultsInfoBanner text="{infoBannerText}{resultsData?.params?.matchName}" />
 
-			<div class="vstack s12 vcenter">
-				<div class="hstack s8">
-					<div class="vstack s8">
-						<ResultsTeamBanner
-							alliance="blue"
-							teamNumber={data.params?.blue?.teams?.[0]?.number}
-							teamName={data.params?.blue?.teams?.[0]?.name}
-							rank={data.params?.blue?.teams?.[0]?.ranking?.toString()}
-							leagueRank={data.params?.blue?.teams?.[0]?.leagueRanking?.toString()}
-							rankMove={data.params?.blue?.teams?.[0]?.rankMove}
-						/>
-						<ResultsTeamBanner
-							alliance="blue"
-							teamNumber={data.params?.blue?.teams?.[1]?.number}
-							teamName={data.params?.blue?.teams?.[1]?.name}
-							rank={data.params?.blue?.teams?.[1]?.ranking?.toString()}
-							leagueRank={data.params?.blue?.teams?.[1]?.leagueRanking?.toString()}
-							rankMove={data.params?.blue?.teams?.[1]?.rankMove}
-						/>
-					</div>
+				<div class="vstack s12 vcenter">
+					<div class="hstack s12">
+						<div class="vstack s8">
+							<ResultsTeamBanner
+								alliance="blue"
+								teamNumber={resultsData?.params?.blue?.teams?.[0]?.number}
+								teamName={resultsData?.params?.blue?.teams?.[0]?.name}
+								rank={resultsData?.params?.blue?.teams?.[0]?.ranking?.toString()}
+								leagueRank={resultsData?.params?.blue?.teams?.[0]?.leagueRanking?.toString()}
+								rankMove={resultsData?.params?.blue?.teams?.[0]?.rankMove}
+							/>
+							<ResultsTeamBanner
+								alliance="blue"
+								teamNumber={resultsData?.params?.blue?.teams?.[1]?.number}
+								teamName={resultsData?.params?.blue?.teams?.[1]?.name}
+								rank={resultsData?.params?.blue?.teams?.[1]?.ranking?.toString()}
+								leagueRank={resultsData?.params?.blue?.teams?.[1]?.leagueRanking?.toString()}
+								rankMove={resultsData?.params?.blue?.teams?.[1]?.rankMove}
+							/>
+						</div>
 
-					<div class="vstack s8">
-						<ResultsTeamBanner
-							alliance="red"
-							teamNumber={data.params?.red?.teams?.[0]?.number}
-							teamName={data.params?.red?.teams?.[0]?.name}
-							rank={data.params?.red?.teams?.[0]?.ranking?.toString()}
-							leagueRank={data.params?.red?.teams?.[0]?.leagueRanking?.toString()}
-							rankMove={data.params?.red?.teams?.[0]?.rankMove}
+						<ResultsTotalScoreCard
+							alliance="blue"
+							score={(
+								(resultsData?.params?.blueScores?.preFoulTotal || 0) +
+								(resultsData?.params?.redScores?.foulPointsCommitted || 0)
+							).toString()}
 						/>
-						<ResultsTeamBanner
+						<ResultsTotalScoreCard
 							alliance="red"
-							teamNumber={data.params?.red?.teams?.[1]?.number}
-							teamName={data.params?.red?.teams?.[1]?.name}
-							rank={data.params?.red?.teams?.[1]?.ranking?.toString()}
-							leagueRank={data.params?.red?.teams?.[1]?.leagueRanking?.toString()}
-							rankMove={data.params?.red?.teams?.[1]?.rankMove}
+							score={(
+								(resultsData?.params?.redScores?.preFoulTotal || 0) +
+								(resultsData?.params?.blueScores?.foulPointsCommitted || 0)
+							).toString()}
 						/>
+
+						<div class="vstack s8">
+							<ResultsTeamBanner
+								alliance="red"
+								teamNumber={resultsData?.params?.red?.teams?.[0]?.number}
+								teamName={resultsData?.params?.red?.teams?.[0]?.name}
+								rank={resultsData?.params?.red?.teams?.[0]?.ranking?.toString()}
+								leagueRank={resultsData?.params?.red?.teams?.[0]?.leagueRanking?.toString()}
+								rankMove={resultsData?.params?.red?.teams?.[0]?.rankMove}
+							/>
+							<ResultsTeamBanner
+								alliance="red"
+								teamNumber={resultsData?.params?.red?.teams?.[1]?.number}
+								teamName={resultsData?.params?.red?.teams?.[1]?.name}
+								rank={resultsData?.params?.red?.teams?.[1]?.ranking?.toString()}
+								leagueRank={resultsData?.params?.red?.teams?.[1]?.leagueRanking?.toString()}
+								rankMove={resultsData?.params?.red?.teams?.[1]?.rankMove}
+							/>
+						</div>
 					</div>
 				</div>
+
+				<ResultsScoreBreakdown
+					blueAuto={resultsData?.params?.blueScores?.autoPoints?.toString()}
+					blueAutoSampleNet={resultsData?.params?.blueScores?.autoSampleNet?.toString()}
+					blueAutoSampleLow={resultsData?.params?.blueScores?.autoSampleLow?.toString()}
+					blueAutoSampleHigh={resultsData?.params?.blueScores?.autoSampleHigh?.toString()}
+					blueAutoSpecimenLow={resultsData?.params?.blueScores?.autoSpecimenLow?.toString()}
+					blueAutoSpecimenHigh={resultsData?.params?.blueScores?.autoSpecimenHigh?.toString()}
+					blue1AutoLocation={resultsData?.params?.blueScores?.robot1Auto}
+					blue2AutoLocation={resultsData?.params?.blueScores?.robot2Auto}
+					blueTeleop={resultsData?.params?.blueScores?.teleopPoints?.toString()}
+					blueTeleopSampleNet={resultsData?.params?.blueScores?.teleopSampleNet?.toString()}
+					blueTeleopSampleLow={resultsData?.params?.blueScores?.teleopSampleLow?.toString()}
+					blueTeleopSampleHigh={resultsData?.params?.blueScores?.teleopSampleHigh?.toString()}
+					blueTeleopSpecimenLow={resultsData?.params?.blueScores?.teleopSpecimenLow?.toString()}
+					blueTeleopSpecimenHigh={resultsData?.params?.blueScores?.teleopSpecimenHigh?.toString()}
+					blue1TeleopLocation={resultsData?.params?.blueScores?.robot1Teleop}
+					blue2TeleopLocation={resultsData?.params?.blueScores?.robot2Teleop}
+					blueFoulsReceived={resultsData?.params?.redScores?.foulPointsCommitted?.toString()}
+					redAuto={resultsData?.params?.redScores?.autoPoints?.toString()}
+					redAutoSampleNet={resultsData?.params?.redScores?.autoSampleNet?.toString()}
+					redAutoSampleLow={resultsData?.params?.redScores?.autoSampleLow?.toString()}
+					redAutoSampleHigh={resultsData?.params?.redScores?.autoSampleHigh?.toString()}
+					redAutoSpecimenLow={resultsData?.params?.redScores?.autoSpecimenLow?.toString()}
+					redAutoSpecimenHigh={resultsData?.params?.redScores?.autoSpecimenHigh?.toString()}
+					red1AutoLocation={resultsData?.params?.redScores?.robot1Auto}
+					red2AutoLocation={resultsData?.params?.redScores?.robot2Auto}
+					redTeleop={resultsData?.params?.redScores?.teleopPoints?.toString()}
+					redTeleopSampleNet={resultsData?.params?.redScores?.teleopSampleNet?.toString()}
+					redTeleopSampleLow={resultsData?.params?.redScores?.teleopSampleLow?.toString()}
+					redTeleopSampleHigh={resultsData?.params?.redScores?.teleopSampleHigh?.toString()}
+					redTeleopSpecimenLow={resultsData?.params?.redScores?.teleopSpecimenLow?.toString()}
+					redTeleopSpecimenHigh={resultsData?.params?.redScores?.teleopSpecimenHigh?.toString()}
+					red1TeleopLocation={resultsData?.params?.redScores?.robot1Teleop}
+					red2TeleopLocation={resultsData?.params?.redScores?.robot2Teleop}
+					redFoulsReceived={resultsData?.params?.blueScores?.foulPointsCommitted?.toString()}
+					hideDetails={(data?.type == 'SHOW_PREVIEW' || data?.type == 'SHOW_MATCH')}
+				/>
 			</div>
 
-			<div class="vstack vcenter s8">
-				<div class="hstack s12">
-					<ResultsTotalScoreCard
-						alliance="blue"
-						score={(
-							(data.params?.blueScores?.preFoulTotal || 0) +
-							(data.params?.redScores?.foulPointsCommitted || 0)
-						).toString()}
-						won={(data.params?.blueScores?.preFoulTotal || 0) +
-							(data.params?.redScores?.foulPointsCommitted || 0) >=
-							(data.params?.redScores?.preFoulTotal || 0) +
-								(data.params?.blueScores?.foulPointsCommitted || 0)}
-					/>
-					<ResultsTotalScoreCard
-						alliance="red"
-						score={(
-							(data.params?.redScores?.preFoulTotal || 0) +
-							(data.params?.blueScores?.foulPointsCommitted || 0)
-						).toString()}
-						won={(data.params?.redScores?.preFoulTotal || 0) +
-							(data.params?.blueScores?.foulPointsCommitted || 0) >=
-							(data.params?.blueScores?.preFoulTotal || 0) +
-								(data.params?.redScores?.foulPointsCommitted || 0)}
-					/>
-				</div>
-
-				<div class="hstack s8">
-					<ResultsScoreBadge
-						alliance="blue"
-						score={data.params?.redScores?.foulPointsCommitted?.toString()}
-						otherAllianceScore={data.params?.blueScores?.foulPointsCommitted?.toString()}
-					/>
-					<ResultsScoreElementText text="Fouls Awarded" />
-					<ResultsScoreBadge
-						alliance="red"
-						score={data.params?.blueScores?.foulPointsCommitted?.toString()}
-						otherAllianceScore={data.params?.redScores?.foulPointsCommitted?.toString()}
-					/>
-				</div>
-
-				<div class="shiftUp hstack s64">
-					<div class="vstack vcenter s8">
-						<ResultsScoreSectionTitle text="AUTO" />
-
-						<div class="hstack s8">
-							<ResultsScoreBadge
-								alliance="blue"
-								score={data.params?.blueScores?.teleopSampleNet?.toString()}
-								otherAllianceScore={data.params?.redScores?.teleopSampleNet?.toString()}
-							/>
-							<ResultsScoreElementText text="Net Zone Samples" />
-							<ResultsScoreBadge
-								alliance="red"
-								score={data.params?.redScores?.teleopSampleNet?.toString()}
-								otherAllianceScore={data.params?.blueScores?.teleopSampleNet?.toString()}
-							/>
-						</div>
-
-						<div class="hstack s8">
-							<ResultsScoreBadge
-								alliance="blue"
-								score={data.params?.blueScores?.teleopSampleLow?.toString()}
-								otherAllianceScore={data.params?.redScores?.teleopSampleLow?.toString()}
-							/>
-							<ResultsScoreElementText text="Low Basket Samples" />
-							<ResultsScoreBadge
-								alliance="red"
-								score={data.params?.redScores?.teleopSampleLow?.toString()}
-								otherAllianceScore={data.params?.blueScores?.teleopSampleLow?.toString()}
-							/>
-						</div>
-
-						<div class="hstack s8">
-							<ResultsScoreBadge
-								alliance="blue"
-								score={data.params?.blueScores?.teleopSampleHigh?.toString()}
-								otherAllianceScore={data.params?.redScores?.teleopSampleHigh?.toString()}
-							/>
-							<ResultsScoreElementText text="High Basket Samples" />
-							<ResultsScoreBadge
-								alliance="red"
-								score={data.params?.redScores?.teleopSampleHigh?.toString()}
-								otherAllianceScore={data.params?.blueScores?.teleopSampleHigh?.toString()}
-							/>
-						</div>
-
-						<div class="hstack s8">
-							<ResultsScoreBadge
-								alliance="blue"
-								score={data.params?.blueScores?.teleopSampleHigh?.toString()}
-								otherAllianceScore={data.params?.redScores?.teleopSampleHigh?.toString()}
-							/>
-							<ResultsScoreElementText text="High Basket Samples" />
-							<ResultsScoreBadge
-								alliance="red"
-								score={data.params?.redScores?.teleopSampleHigh?.toString()}
-								otherAllianceScore={data.params?.blueScores?.teleopSampleHigh?.toString()}
-							/>
-						</div>
-
-						<div class="hstack s8">
-							<ResultsScoreBadge
-								alliance="blue"
-								score={data.params?.blueScores?.teleopSpecimenLow?.toString()}
-								otherAllianceScore={data.params?.redScores?.teleopSpecimenLow?.toString()}
-							/>
-							<ResultsScoreElementText text="Low Chamber Specimen" />
-							<ResultsScoreBadge
-								alliance="red"
-								score={data.params?.redScores?.teleopSpecimenLow?.toString()}
-								otherAllianceScore={data.params?.blueScores?.teleopSpecimenLow?.toString()}
-							/>
-						</div>
-
-						<div class="hstack s8">
-							<ResultsScoreBadge
-								alliance="blue"
-								score={data.params?.blueScores?.teleopSpecimenHigh?.toString()}
-								otherAllianceScore={data.params?.redScores?.teleopSpecimenHigh?.toString()}
-							/>
-							<ResultsScoreElementText text="High Chamber Specimen" />
-							<ResultsScoreBadge
-								alliance="red"
-								score={data.params?.redScores?.teleopSpecimenHigh?.toString()}
-								otherAllianceScore={data.params?.blueScores?.teleopSpecimenHigh?.toString()}
-							/>
-						</div>
-
-						<div class="hstack s8 hcenter vcenter">
-							<div class="vstack s8">
-								<ResultsLocationBadge
-									alliance="blue"
-									location={data.params?.blueScores?.robot1Auto}
-									sizeDeterminingLocation={[
-										data.params?.blueScores?.robot1Auto || '',
-										data.params?.blueScores?.robot2Auto || '',
-										data.params?.redScores?.robot1Auto || '',
-										data.params?.redScores?.robot2Auto || ''
-									].reduce((a, b) => (b.length > a.length ? b : a))}
-								/>
-								<ResultsLocationBadge
-									alliance="blue"
-									location={data.params?.blueScores?.robot2Auto}
-									sizeDeterminingLocation={[
-										data.params?.blueScores?.robot1Auto || '',
-										data.params?.blueScores?.robot2Auto || '',
-										data.params?.redScores?.robot1Auto || '',
-										data.params?.redScores?.robot2Auto || ''
-									].reduce((a, b) => (b.length > a.length ? b : a))}
-								/>
-							</div>
-
-							<ResultsScoreElementText text="Location" />
-
-							<div class="vstack s8">
-								<ResultsLocationBadge
-									alliance="red"
-									location={data.params?.redScores?.robot1Auto}
-									sizeDeterminingLocation={[
-										data.params?.blueScores?.robot1Auto || '',
-										data.params?.blueScores?.robot2Auto || '',
-										data.params?.redScores?.robot1Auto || '',
-										data.params?.redScores?.robot2Auto || ''
-									].reduce((a, b) => (b.length > a.length ? b : a))}
-								/>
-								<ResultsLocationBadge
-									alliance="red"
-									location={data.params?.redScores?.robot2Auto}
-									sizeDeterminingLocation={[
-										data.params?.blueScores?.robot1Auto || '',
-										data.params?.blueScores?.robot2Auto || '',
-										data.params?.redScores?.robot1Auto || '',
-										data.params?.redScores?.robot2Auto || ''
-									].reduce((a, b) => (b.length > a.length ? b : a))}
-								/>
-							</div>
-						</div>
+			<preview class="vstack vcenter s8 {(data?.type == 'SHOW_PREVIEW' || data?.type == 'SHOW_MATCH') ? '' : 'vscale0'}">
+				<InfoBanner text="Upcoming Match • {data?.params?.matchName}" />
+				<div class="hgrid s12">
+					<div class="vgrid s8">
+						<TeamBanner
+							alliance="blue"
+							teamNumber={data?.params?.blue?.teams?.[0]?.number}
+							teamName={data?.params?.blue?.teams?.[0]?.name}
+							rank={data?.params?.blue?.teams?.[0]?.ranking?.toString()}
+							leagueRank={data?.params?.blue?.teams?.[0]?.leagueRanking?.toString()}
+							rankMove={data?.params?.blue?.teams?.[0]?.rankMove}
+						/>
+						<TeamBanner
+							alliance="blue"
+							teamNumber={data?.params?.blue?.teams?.[1]?.number}
+							teamName={data?.params?.blue?.teams?.[1]?.name}
+							rank={data?.params?.blue?.teams?.[1]?.ranking?.toString()}
+							leagueRank={data?.params?.blue?.teams?.[1]?.leagueRanking?.toString()}
+							rankMove={data?.params?.blue?.teams?.[1]?.rankMove}
+						/>
 					</div>
 
-					<div class="vstack vcenter s8">
-						<ResultsScoreSectionTitle text="TELEOP" />
-
-						<div class="hstack s8">
-							<ResultsScoreBadge
-								alliance="blue"
-								score={data.params?.blueScores?.teleopSampleNet?.toString()}
-								otherAllianceScore={data.params?.redScores?.teleopSampleNet?.toString()}
-							/>
-							<ResultsScoreElementText text="Net Zone Samples" />
-							<ResultsScoreBadge
-								alliance="red"
-								score={data.params?.redScores?.teleopSampleNet?.toString()}
-								otherAllianceScore={data.params?.blueScores?.teleopSampleNet?.toString()}
-							/>
-						</div>
-
-						<div class="hstack s8">
-							<ResultsScoreBadge
-								alliance="blue"
-								score={data.params?.blueScores?.teleopSampleLow?.toString()}
-								otherAllianceScore={data.params?.redScores?.teleopSampleLow?.toString()}
-							/>
-							<ResultsScoreElementText text="Low Basket Samples" />
-							<ResultsScoreBadge
-								alliance="red"
-								score={data.params?.redScores?.teleopSampleLow?.toString()}
-								otherAllianceScore={data.params?.blueScores?.teleopSampleLow?.toString()}
-							/>
-						</div>
-
-						<div class="hstack s8">
-							<ResultsScoreBadge
-								alliance="blue"
-								score={data.params?.blueScores?.teleopSampleHigh?.toString()}
-								otherAllianceScore={data.params?.redScores?.teleopSampleHigh?.toString()}
-							/>
-							<ResultsScoreElementText text="High Basket Samples" />
-							<ResultsScoreBadge
-								alliance="red"
-								score={data.params?.redScores?.teleopSampleHigh?.toString()}
-								otherAllianceScore={data.params?.blueScores?.teleopSampleHigh?.toString()}
-							/>
-						</div>
-
-						<div class="hstack s8">
-							<ResultsScoreBadge
-								alliance="blue"
-								score={data.params?.blueScores?.teleopSampleHigh?.toString()}
-								otherAllianceScore={data.params?.redScores?.teleopSampleHigh?.toString()}
-							/>
-							<ResultsScoreElementText text="High Basket Samples" />
-							<ResultsScoreBadge
-								alliance="red"
-								score={data.params?.redScores?.teleopSampleHigh?.toString()}
-								otherAllianceScore={data.params?.blueScores?.teleopSampleHigh?.toString()}
-							/>
-						</div>
-
-						<div class="hstack s8">
-							<ResultsScoreBadge
-								alliance="blue"
-								score={data.params?.blueScores?.teleopSpecimenLow?.toString()}
-								otherAllianceScore={data.params?.redScores?.teleopSpecimenLow?.toString()}
-							/>
-							<ResultsScoreElementText text="Low Chamber Specimen" />
-							<ResultsScoreBadge
-								alliance="red"
-								score={data.params?.redScores?.teleopSpecimenLow?.toString()}
-								otherAllianceScore={data.params?.blueScores?.teleopSpecimenLow?.toString()}
-							/>
-						</div>
-
-						<div class="hstack s8">
-							<ResultsScoreBadge
-								alliance="blue"
-								score={data.params?.blueScores?.teleopSpecimenHigh?.toString()}
-								otherAllianceScore={data.params?.redScores?.teleopSpecimenHigh?.toString()}
-							/>
-							<ResultsScoreElementText text="High Chamber Specimen" />
-							<ResultsScoreBadge
-								alliance="red"
-								score={data.params?.redScores?.teleopSpecimenHigh?.toString()}
-								otherAllianceScore={data.params?.blueScores?.teleopSpecimenHigh?.toString()}
-							/>
-						</div>
-
-						<div class="hstack s8 hcenter vcenter">
-							<div class="vstack s8">
-								<ResultsLocationBadge
-									alliance="blue"
-									location={data.params?.blueScores?.robot1Teleop}
-									sizeDeterminingLocation={[
-										data.params?.blueScores?.robot1Teleop || '',
-										data.params?.blueScores?.robot2Teleop || '',
-										data.params?.redScores?.robot1Teleop || '',
-										data.params?.redScores?.robot2Teleop || ''
-									].reduce((a, b) => (b.length > a.length ? b : a))}
-								/>
-								<ResultsLocationBadge
-									alliance="blue"
-									location={data.params?.blueScores?.robot2Teleop}
-									sizeDeterminingLocation={[
-										data.params?.blueScores?.robot1Teleop || '',
-										data.params?.blueScores?.robot2Teleop || '',
-										data.params?.redScores?.robot1Teleop || '',
-										data.params?.redScores?.robot2Teleop || ''
-									].reduce((a, b) => (b.length > a.length ? b : a))}
-								/>
-							</div>
-
-							<ResultsScoreElementText text="Location" />
-
-							<div class="vstack s8">
-								<ResultsLocationBadge
-									alliance="red"
-									location={data.params?.redScores?.robot1Teleop}
-									sizeDeterminingLocation={[
-										data.params?.blueScores?.robot1Teleop || '',
-										data.params?.blueScores?.robot2Teleop || '',
-										data.params?.redScores?.robot1Teleop || '',
-										data.params?.redScores?.robot2Teleop || ''
-									].reduce((a, b) => (b.length > a.length ? b : a))}
-								/>
-								<ResultsLocationBadge
-									alliance="red"
-									location={data.params?.redScores?.robot2Teleop}
-									sizeDeterminingLocation={[
-										data.params?.blueScores?.robot1Teleop || '',
-										data.params?.blueScores?.robot2Teleop || '',
-										data.params?.redScores?.robot1Teleop || '',
-										data.params?.redScores?.robot2Teleop || ''
-									].reduce((a, b) => (b.length > a.length ? b : a))}
-								/>
-							</div>
-						</div>
+					<div class="vgrid s8">
+						<TeamBanner
+							alliance="red"
+							teamNumber={data?.params?.red?.teams?.[0]?.number}
+							teamName={data?.params?.red?.teams?.[0]?.name}
+							rank={data?.params?.red?.teams?.[0]?.ranking?.toString()}
+							leagueRank={data?.params?.red?.teams?.[0]?.leagueRanking?.toString()}
+							rankMove={data?.params?.red?.teams?.[0]?.rankMove}
+						/>
+						<TeamBanner
+							alliance="red"
+							teamNumber={data?.params?.red?.teams?.[1]?.number}
+							teamName={data?.params?.red?.teams?.[1]?.name}
+							rank={data?.params?.red?.teams?.[1]?.ranking?.toString()}
+							leagueRank={data?.params?.red?.teams?.[1]?.leagueRanking?.toString()}
+							rankMove={data?.params?.red?.teams?.[1]?.rankMove}
+						/>
 					</div>
 				</div>
-			</div>
-		</div></results
-	>
+			</preview>
+		</div>
+	</results>
 </main>
 
 <style lang="scss">
@@ -835,6 +626,7 @@
 	}
 
 	main {
+		overflow: hidden;
 		z-index: -2;
 	}
 
@@ -842,16 +634,23 @@
 		opacity: 0;
 	}
 
-	#top {
-		position: absolute;
-		bottom: 14.6vw;
-		align-items: end;
-	}
-
 	#bottom {
 		position: absolute;
 		bottom: 1.2vw;
 		align-items: end;
+	}
+
+	.results {
+		position: relative;
+		padding: 0.8vw;
+		border-radius: 2.4vw;
+		background: linear-gradient(to right, #04589e66, #b6191f66);
+		box-shadow:
+			0 0 0 0.5vw #f5e447,
+			0 0 0 1vw #9cd9e8,
+			0 0 0 1.5vw #0283ae,
+			0 0 12vw 6vw rgba(0, 0, 0, 0.5);
+		background-clip: padding-box;
 	}
 
 	shadow-rect {
@@ -862,7 +661,12 @@
 		z-index: -1;
 	}
 
-	.shiftUp {
-		margin-top: -2vw;
+	preview.vscale0 {
+		margin: -5.4vw 0;
+		opacity: 0;
+	}
+
+	.mt2 {
+		margin-top: 2vw;
 	}
 </style>

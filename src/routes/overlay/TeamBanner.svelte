@@ -23,7 +23,7 @@
 <container class={alliance}>
 	<div class="hstack">
 		{#if alliance === 'red'}
-			{#if +leagueRank > 0}
+			{#if +leagueRank >= 0}
 				<div id="rankStack" class="vstack">
 					<h3 class="rankMove {rankMove == 'UP' ? 'up' : 'dn'}">􀆇</h3>
 					<h3 class="rank">{leagueRank}</h3>
@@ -37,7 +37,7 @@
 		{#if alliance !== 'red'}
 			<h3 data-team-name={teamName} class="name">{teamName}</h3>
 
-			{#if +leagueRank > 0}
+			{#if +leagueRank >= 0}
 				<div id="rankStack" class="vstack">
 					<h3 class="rankMove {rankMove == 'UP' ? 'up' : 'dn'}">􀆇</h3>
 					<h3 class="rank">{leagueRank}</h3>
@@ -54,15 +54,15 @@
 		display: flex;
 		align-items: center;
 		width: 24vw;
-		height: 3.6vw;
+		height: 3vw;
 		margin: 0;
-		color: white;
+		color: #fff;
 		border-radius: 0.8vw;
-		box-shadow: 0 0 2vw 0.2vw rgba(0, 0, 0, 0.25);
+		box-shadow: 0 0 2vw 0.2vw rgba(0, 0, 0, 0.5);
 
 		div {
 			width: 22vw;
-			height: 2.4vw;
+			height: 1.8vw;
 			align-items: center;
 			margin: 0.6vw 1vw;
 			width: 100%;
@@ -111,13 +111,13 @@
 	}
 
 	.number {
-		font-size: 1.4vw;
+		font-size: 1.2vw;
 		font-weight: 500;
 		width: 5vw;
 	}
 
 	.name {
-		font-size: clamp(0.7vw, calc(13.5vw / var(--char-count, 16) * 3.6), 1.4vw);
+		font-size: clamp(0.6vw, calc(13.5vw / var(--char-count, 16) * 3.4), 1.2vw);
 		font-weight: 300;
 		width: 100%;
 	}
@@ -133,12 +133,12 @@
 	}
 
 	.rank {
-		font-size: 1.4vw;
+		font-size: 1.2vw;
 		font-weight: 550;
 	}
 
 	.rankMove {
-		font-size: 0.8vw;
+		font-size: 0.6vw;
 		font-weight: 600;
 	}
 </style>

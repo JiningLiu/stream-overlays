@@ -1,7 +1,7 @@
 <svelte:options customElement="score-badge-component" />
 
 <script lang="ts">
-	let { alliance = 'gray', order = '0', type = '0', pos = '0', score = '-' } = $props();
+	let { alliance = 'gray', order = '0', type = '0', pos = '0', score = '0' } = $props();
 </script>
 
 <container class={alliance}>
@@ -27,9 +27,7 @@
 					{/if}
 				</div>
 			{:else if type == '2'}
-				<div class="zstack">
-					<h4 class="lgIcon">􁹫</h4>
-				</div>
+				<h4 class="lgIcon {pos == '1' ? 'flipped' : ''}">􁹫</h4>
 			{/if}
 		{/if}
 		<h4 class="score">{score}</h4>
@@ -54,9 +52,7 @@
 					{/if}
 				</div>
 			{:else if type == '2'}
-				<div class="zstack">
-					<h4 class="lgIcon">􁹫</h4>
-				</div>
+				<h4 class="lgIcon {pos == '1' ? 'flipped' : ''}">􁹫</h4>
 			{/if}
 		{/if}
 	</div>
@@ -67,11 +63,11 @@
 	container {
 		display: flex;
 		align-items: center;
-		height: 2vw;
+		height: 2.4vw;
 		margin: 0;
-		color: white;
+		color: #fff;
 		border-radius: 0.6vw;
-		box-shadow: 0 0 1vw 0.1vw rgba(0, 0, 0, 0.25);
+		box-shadow: 0 0 1vw 0.1vw rgba(0, 0, 0, 0.5);
 
 		div {
 			height: 1.6vw;
@@ -93,7 +89,7 @@
 	}
 
 	.order0 {
-		margin: 0.3vw 0.6vw 0.3vw 0.45vw;
+		margin: 0.3vw 0.55vw 0.3vw 0.5vw;
 
 		.score {
 			margin-left: 0.25vw;
@@ -101,7 +97,7 @@
 	}
 
 	.order1 {
-		margin: 0.3vw 0.45vw 0.3vw 0.6vw;
+		margin: 0.3vw 0.5vw 0.3vw 0.55vw;
 
 		.score {
 			margin-right: 0.25vw;
@@ -109,25 +105,27 @@
 	}
 
 	.score {
-		font-size: 1.2vw;
-		font-weight: 500;
+		font-size: 1.6vw;
+		font-weight: 600;
 		font-variant-numeric: tabular-nums;
 	}
 
 	.lgIcon {
+		margin-top: 0.05vw;
 		position: relative;
 		z-index: 1;
-		font-size: 1.2vw;
+		font-size: 1.6vw;
 		font-weight: 400;
 	}
 
 	.smIcon {
 		width: 100%;
+		margin-top: 0.05vw;
 		text-align: center;
 		position: absolute;
 		z-index: 2;
-		font-size: 0.6vw;
-		font-weight: 500;
+		font-size: 0.8vw;
+		font-weight: 600;
 	}
 
 	#dashStack {
@@ -135,17 +133,21 @@
 		flex-direction: column;
 		justify-content: center;
 		align-items: center;
-		margin: 0.3vw 0.15vw 0.3vw 0.2vw;
+		margin: 0.25vw 0.15vw 0.35vw 0.2vw;
 	}
 
 	.dashIcon,
 	.dashIconTransluscent {
-		font-size: 1vw;
+		font-size: 1.4vw;
 		font-weight: 500;
 		line-height: 0.5vw;
 	}
 
 	.dashIconTransluscent {
 		opacity: 50%;
+	}
+
+	.flipped {
+		transform: rotate(180deg);
 	}
 </style>
