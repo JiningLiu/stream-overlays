@@ -2,8 +2,6 @@
 
 For use with the [stream-cam](https://github.com/JiningLiu/stream-cam/) project and official [FTCLive](https://github.com/FIRST-Tech-Challenge/scorekeeper) scoring system.
 
-If using for an event, please use use a prebuilt static version of the app, found in [releases](/releases).
-
 ## Developing
 
 Once you've installed dependencies with `bun install`, start a development server:
