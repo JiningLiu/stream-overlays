@@ -303,10 +303,7 @@
 				console.log('FTCLive display WebSocket closed.');
 			};
 		} else {
-			alert(
-				'No FTCLive display WebSocket URL defined. Please create a valid link in the overlay console.'
-			);
-			location.reload();
+			location.href = './generate';
 		}
 	});
 </script>
@@ -473,7 +470,11 @@
 		<shadow-rect></shadow-rect>
 	</overlay>
 
-	<results class="{showResults ? '' : 'hidden'} {(data?.type == 'SHOW_PREVIEW' || data?.type == 'SHOW_MATCH') ? '' : 'mt2'}">
+	<results
+		class="{showResults ? '' : 'hidden'} {data?.type == 'SHOW_PREVIEW' || data?.type == 'SHOW_MATCH'
+			? ''
+			: 'mt2'}"
+	>
 		<div class="vstack vcenter s64">
 			<div class="results vstack s16 vcenter">
 				<ResultsInfoBanner text="{infoBannerText}{resultsData?.params?.matchName}" />
@@ -570,11 +571,15 @@
 					red1TeleopLocation={resultsData?.params?.redScores?.robot1Teleop}
 					red2TeleopLocation={resultsData?.params?.redScores?.robot2Teleop}
 					redFoulsReceived={resultsData?.params?.blueScores?.foulPointsCommitted?.toString()}
-					hideDetails={(data?.type == 'SHOW_PREVIEW' || data?.type == 'SHOW_MATCH')}
+					hideDetails={data?.type == 'SHOW_PREVIEW' || data?.type == 'SHOW_MATCH'}
 				/>
 			</div>
 
-			<preview class="vstack vcenter s8 {(data?.type == 'SHOW_PREVIEW' || data?.type == 'SHOW_MATCH') ? '' : 'vscale0'}">
+			<preview
+				class="vstack vcenter s8 {data?.type == 'SHOW_PREVIEW' || data?.type == 'SHOW_MATCH'
+					? ''
+					: 'vscale0'}"
+			>
 				<InfoBanner text="Upcoming Match • {data?.params?.matchName}" />
 				<div class="hgrid s12">
 					<div class="vgrid s8">

@@ -34,10 +34,9 @@
 	h1 {
 		max-width: 10vw;
 		margin: 0.5vw 1vw;
-		font-size: 4vw;
-		font-weight: 600;
+		font-size: 4.2vw;
+		font-weight: 700;
 		font-variant-numeric: tabular-nums;
-		transform: scaleX(1.2);
 		display: inline-block;
 	}
 </style>
