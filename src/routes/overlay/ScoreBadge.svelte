@@ -17,15 +17,11 @@
 					{/if}
 				</div>
 			{:else if type == '1'}
-				<div id="dashStack" class="vstack">
-					{#if pos == '0'}
-						<h4 class="dashIcon">—</h4>
-						<h4 class="dashIconTransluscent">—</h4>
-					{:else if pos == '1'}
-						<h4 class="dashIconTransluscent">—</h4>
-						<h4 class="dashIcon">—</h4>
-					{/if}
-				</div>
+				{#if pos == '0'}
+					<h4 class="lgIcon">􀤀</h4>
+				{:else if pos == '1'}
+					<h4 class="lgIcon flipped">􀤀</h4>
+				{/if}
 			{:else if type == '2'}
 				<h4 class="lgIcon {pos == '1' ? 'flipped' : ''}">􁹫</h4>
 			{/if}
@@ -42,15 +38,11 @@
 					{/if}
 				</div>
 			{:else if type == '1'}
-				<div id="dashStack" class="vstack">
-					{#if pos == '0'}
-						<h4 class="dashIcon">—</h4>
-						<h4 class="dashIconTransluscent">—</h4>
-					{:else if pos == '1'}
-						<h4 class="dashIconTransluscent">—</h4>
-						<h4 class="dashIcon">—</h4>
-					{/if}
-				</div>
+				{#if pos == '0'}
+					<h4 class="lgIcon">􀤀</h4>
+				{:else if pos == '1'}
+					<h4 class="lgIcon flipped">􀤀</h4>
+				{/if}
 			{:else if type == '2'}
 				<h4 class="lgIcon {pos == '1' ? 'flipped' : ''}">􁹫</h4>
 			{/if}
@@ -126,25 +118,6 @@
 		z-index: 2;
 		font-size: 0.8vw;
 		font-weight: 600;
-	}
-
-	#dashStack {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-		margin: 0.25vw 0.15vw 0.35vw 0.2vw;
-	}
-
-	.dashIcon,
-	.dashIconTransluscent {
-		font-size: 1.4vw;
-		font-weight: 500;
-		line-height: 0.5vw;
-	}
-
-	.dashIconTransluscent {
-		opacity: 50%;
 	}
 
 	.flipped {

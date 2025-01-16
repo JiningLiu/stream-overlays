@@ -110,15 +110,15 @@
 			this.startTime = performance.now();
 			switch (this.currentStateIndex) {
 				case 0:
-					mode = 'AUTO';
+					mode = 'Auto';
 					beforeTeleop = true;
 					break;
 				case 1:
-					mode = 'WAIT';
+					mode = 'Wait';
 					beforeTeleop = true;
 					break;
 				case 2:
-					mode = 'TELEOP';
+					mode = 'TeleOp';
 					beforeTeleop = false;
 			}
 			this.tick();
@@ -153,7 +153,7 @@
 				this.remainingTime = this.timerStates[this.currentStateIndex];
 			} else {
 				this.timerRunning = false;
-				mode = 'JUDGING';
+				mode = 'Review';
 				beforeTeleop = false;
 				return;
 			}
@@ -172,7 +172,7 @@
 	let resultsData: GameUpdate | undefined;
 
 	let time = 0;
-	let mode = 'STANDBY';
+	let mode = 'Standby';
 	let beforeTeleop = true;
 
 	let infoBannerText = '';
@@ -264,7 +264,7 @@
 						resultsData = JSON.parse(event.data);
 						timer.abort();
 						time = 30;
-						mode = 'STANDBY';
+						mode = 'Standby';
 						beforeTeleop = false;
 						showResults = true;
 
@@ -282,17 +282,17 @@
 						resultsData = undefined;
 					} else if (data?.type === 'ABORT_MATCH') {
 						timer.abort();
-						mode = 'ABORTED';
+						mode = 'Aborted';
 					} else if (data?.type === 'SHOW_PREVIEW') {
 						timer.abort();
 						time = 30;
-						mode = 'STANDBY';
+						mode = 'Standby';
 						beforeTeleop = true;
 						return;
 					} else if (data?.type == 'SHOW_MATCH') {
 						timer.abort();
 						time = 30;
-						mode = 'STANDBY';
+						mode = 'Standby';
 						beforeTeleop = true;
 					}
 					showResults = false;

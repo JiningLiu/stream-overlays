@@ -1,7 +1,7 @@
 <svelte:options customElement="timer-card-component" />
 
 <script lang="ts">
-	let { timer = '0', mode = 'STANDBY' } = $props();
+	let { timer = '0', mode = 'Standby' } = $props();
 
 	function minutes(timer: number): string {
 		return Math.floor((Math.ceil(+timer) / 60)).toString();
@@ -53,7 +53,7 @@
 		max-width: 8vw;
 		margin-top: -0.2vw;
 		font-size: 1.1vw;
-		font-weight: 800;
+		font-weight: 500;
 		display: inline-block;
 	}
 </style>
