@@ -4,7 +4,7 @@
 	"license": "MIT",
 	"type": "module",
 	"scripts": {
-		"dev": "vite dev --host",
+		"dev": "vite dev --host --port 8000",
 		"build": "vite build",
 		"preview": "vite preview --host --port 8000",
 		"deploy": "gh-pages -d build -t true",

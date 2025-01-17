@@ -97,6 +97,7 @@
 	}
 
 	.score {
+		margin-top: 0.05vw;
 		font-size: 1.6vw;
 		font-weight: 600;
 		font-variant-numeric: tabular-nums;

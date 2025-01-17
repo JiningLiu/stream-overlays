@@ -34,8 +34,7 @@
 
 	let camUrl = '';
 	let overlayUrl = '';
-
-	let overlayUrlImport = '';
+	let importOverlayUrl = '';
 
 	onMount(() => {
 		overlayHost = location.hostname;
@@ -62,16 +61,16 @@
 			});
 		});
 
-	// 	const overlayImport = document.getElementById('overlayImport');
-	// 	if (overlayImport) {
-	// 		overlayImport.addEventListener('keydown', (event) => {
-	// 			const keyboardEvent = event as KeyboardEvent;
-	// 			if (keyboardEvent.key === 'Enter') {
-	// 				overlayUrl = overlayUrlImport;
-	// 				// add params parsing
-	// 			}
-	// 		});
-	// 	}
+		// 	const overlayImport = document.getElementById('overlayImport');
+		// 	if (overlayImport) {
+		// 		overlayImport.addEventListener('keydown', (event) => {
+		// 			const keyboardEvent = event as KeyboardEvent;
+		// 			if (keyboardEvent.key === 'Enter') {
+		// 				overlayUrl = overlayUrlImport;
+		// 				// add params parsing
+		// 			}
+		// 		});
+		// 	}
 	});
 
 	function updateCam() {
@@ -140,6 +139,35 @@
 
 	function copyOverlayUrl() {
 		navigator.clipboard.writeText(overlayUrl);
+	}
+
+	function importFromOverlayUrl() {
+		const url = new URL(importOverlayUrl);
+		const params = new URLSearchParams(url.search);
+
+		overlayInfoBannerText = params.get('infoBannerText') || '';
+		overlayBlueSampleNetX = params.get('blueSampleNetX') || '';
+		overlayBlueSampleNetY = params.get('blueSampleNetY') || '';
+		overlayBlueSampleLowX = params.get('blueSampleLowX') || '';
+		overlayBlueSampleLowY = params.get('blueSampleLowY') || '';
+		overlayBlueSampleHighX = params.get('blueSampleHighX') || '';
+		overlayBlueSampleHighY = params.get('blueSampleHighY') || '';
+		overlayBlueSpecimenLowX = params.get('blueSpecimenLowX') || '';
+		overlayBlueSpecimenLowY = params.get('blueSpecimenLowY') || '';
+		overlayBlueSpecimenHighX = params.get('blueSpecimenHighX') || '';
+		overlayBlueSpecimenHighY = params.get('blueSpecimenHighY') || '';
+		overlayRedSampleNetX = params.get('redSampleNetX') || '';
+		overlayRedSampleNetY = params.get('redSampleNetY') || '';
+		overlayRedSampleLowX = params.get('redSampleLowX') || '';
+		overlayRedSampleLowY = params.get('redSampleLowY') || '';
+		overlayRedSampleHighX = params.get('redSampleHighX') || '';
+		overlayRedSampleHighY = params.get('redSampleHighY') || '';
+		overlayRedSpecimenLowX = params.get('redSpecimenLowX') || '';
+		overlayRedSpecimenLowY = params.get('redSpecimenLowY') || '';
+		overlayRedSpecimenHighX = params.get('redSpecimenHighX') || '';
+		overlayRedSpecimenHighY = params.get('redSpecimenHighY') || '';
+
+		updateOverlay();
 	}
 </script>
 
@@ -307,6 +335,12 @@
 				<input type="text" bind:value={overlayUrl} readonly />
 			</div>
 			<button on:click={copyOverlayUrl}>Copy Overlay URL</button>
+
+			<div class="vstack">
+				<p>Import</p>
+				<input type="text" bind:value={importOverlayUrl} />
+			</div>
+			<button on:click={importFromOverlayUrl}>Import from Overlay URL</button>
 		</div>
 	</div>
 
