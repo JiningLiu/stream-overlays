@@ -51,8 +51,8 @@
 
 	h5 {
 		max-width: 8vw;
-		margin-top: -0.2vw;
-		font-size: 1.1vw;
+		margin-top: -0.4vw;
+		font-size: 1.4vw;
 		font-weight: 500;
 		display: inline-block;
 	}

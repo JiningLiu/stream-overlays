@@ -36,7 +36,6 @@
 		margin: 0.5vw 1vw;
 		font-size: 4vw;
 		font-weight: 600;
-		transform: scaleX(1.2);
 		display: inline-block;
 	}
 </style>

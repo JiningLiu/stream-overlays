@@ -48,11 +48,11 @@
 			case 'ASCENT':
 				return 'Ascent Zone';
 			case 'ASCENT_1':
-				return 'Low Rung Touch';
+				return 'Level 1 Ascent';
 			case 'ASCENT_2':
-				return 'Low Rung Ascent';
+				return 'Level 2 Ascent';
 			case 'ASCENT_3':
-				return 'High Rung Ascent';
+				return 'Level 3 Ascent';
 		}
 		return '--';
 	}
@@ -294,7 +294,7 @@
 
 	.big-label {
 		font-size: 1.4vw;
-		font-weight: 800;
+		font-weight: 500;
 		padding: 0;
 		color: black;
 	}
