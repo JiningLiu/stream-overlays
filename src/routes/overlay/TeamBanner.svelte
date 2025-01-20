@@ -26,7 +26,7 @@
 			{#if +leagueRank >= 0}
 				<div id="rankStack" class="vstack">
 					<h3 class="rankMove {rankMove == 'UP' ? 'up' : 'dn'}">􀆇</h3>
-					<h3 class="rank">{leagueRank}</h3>
+					<h3 class="rank">{rank}</h3>
 					<h3 class="rankMove {rankMove == 'DOWN' ? 'down' : 'dn'}">􀆈</h3>
 				</div>
 			{/if}
@@ -40,7 +40,7 @@
 			{#if +leagueRank >= 0}
 				<div id="rankStack" class="vstack">
 					<h3 class="rankMove {rankMove == 'UP' ? 'up' : 'dn'}">􀆇</h3>
-					<h3 class="rank">{leagueRank}</h3>
+					<h3 class="rank">{rank}</h3>
 					<h3 class="rankMove {rankMove == 'DOWN' ? 'down' : 'dn'}">􀆈</h3>
 				</div>
 			{/if}

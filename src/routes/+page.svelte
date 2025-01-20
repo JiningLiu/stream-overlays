@@ -287,7 +287,7 @@
 						timer.abort();
 						time = 30;
 						mode = 'Standby';
-						beforeTeleop = true;
+						beforeTeleop = false;
 						return;
 					} else if (data?.type == 'SHOW_MATCH') {
 						timer.abort();

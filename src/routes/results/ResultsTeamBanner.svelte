@@ -25,7 +25,7 @@
 		{#if alliance === 'red'}
 			<div id="rankStack" class="vstack">
 				<h3 class="rankMove {rankMove == "UP" ? 'up' : 'dn'} results">􀆇</h3>
-				<h3 class="rank results">{leagueRank}</h3>
+				<h3 class="rank results">{rank}</h3>
 				<h3 class="rankMove {rankMove == "DOWN" ? 'down' : 'dn'} results">􀆈</h3>
 			</div>
 			<h3 data-team-name={teamName} class="name results">{teamName}</h3>
@@ -35,7 +35,7 @@
 			<h3 data-team-name={teamName} class="name">{teamName}</h3>
 			<div id="rankStack" class="vstack">
 				<h3 class="rankMove {rankMove == "UP" ? 'up' : 'dn'} results">􀆇</h3>
-				<h3 class="rank results">{leagueRank}</h3>
+				<h3 class="rank results">{rank}</h3>
 				<h3 class="rankMove {rankMove == "DOWN" ? 'down' : 'dn'} results">􀆈</h3>
 			</div>
 		{/if}
