@@ -261,7 +261,7 @@
 				const parsed = JSON.parse(event.data);
 				if (processingTypes.includes(parsed.type)) {
 					if (parsed.type === 'SHOW_RESULTS') {
-						resultsData = JSON.parse(event.data);
+						resultsData = JSON.parse(event.data); //can't we do resultsData = parsed (but its only marginally better)
 						timer.abort();
 						time = 30;
 						mode = 'Standby';
