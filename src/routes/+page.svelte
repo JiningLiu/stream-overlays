@@ -392,7 +392,7 @@
 	});
 
 	let endGame = () => {
-		timer.reset();
+		// timer.reset();
 		// console.log('match over: local = ', Date.now()-times['localStart'], 'ts = ', Date.now()-times['tsStart']);
 		state = State.AWAIT_RESULTS;
 
@@ -428,7 +428,7 @@
 			console.log("Match Timeout didn't abort or end");
 			clearTimeout(matchTimeout);
 		}
-		matchTimeout = setTimeout(endGame, 150000);
+		matchTimeout = setTimeout(endGame, 158000);
 		state = State.IN_MATCH;
 		console.log('DEBUG INFO','prior:'+oldState,'post: '+ parseState(state), 'type: startMethod');
 
