@@ -21,7 +21,7 @@
 		'SCORE_UPDATE',
 		'SHOW_RESULTS'
 	];
-	
+
 	enum State {
 		PRE_START,
 		AWAIT_MATCH,
@@ -55,7 +55,6 @@
 		MINI_RESULTS
 	}
 
-
 	let current = 1;
 
 	let state: State = State.PRE_START;
@@ -65,8 +64,8 @@
 	let resultsTimeout: number | undefined;
 
 	let times = {
-		tsStart:0,
-		localStart:0
+		tsStart: 0,
+		localStart: 0
 	};
 
 	let started = false;
@@ -228,7 +227,10 @@
 	let beforeTeleop = true;
 
 	let infoBannerText = '';
-	let showResults = false;
+
+	let showFullResults = false;
+	let showMiniResults = false;
+	let awaitMini = false;
 
 	const timer = new CountdownTimer();
 
@@ -311,17 +313,12 @@
 
 			socket.onmessage = (event) => {
 				fieldUpdate(event);
-				/** Psuedo of old
-				 * if show results
-				 *   resultsData = event.data
-				 *   
-				*/
 				/*
 				const parsed = JSON.parse(event.data);
 				if (processingTypes.includes(parsed.type)) {
 					if (parsed.type === 'SHOW_RESULTS') {
 						resultsData = JSON.parse(event.data); 
-						timer.abort();
+						timer.abort(); done
 						time = 30;
 						mode = 'Standby';
 						beforeTeleop = false;
@@ -364,17 +361,27 @@
 		} else {
 			location.href = './generate';
 		}
-
 	});
 
 	let endGame = () => {
-		console.log('match over: local = ', Date.now()-times['localStart'], 'ts = ', Date.now()-times['tsStart']);
+		timer.reset();
+		// console.log('match over: local = ', Date.now()-times['localStart'], 'ts = ', Date.now()-times['tsStart']);
 		state = State.AWAIT_RESULTS;
+
 		matchTimeout = undefined;
 	};
 	let closeResults = () => {
-		state = State.AWAIT_MATCH;
+		beforeTeleop = true;
+
+		showMatch();
+
 		resultsTimeout = undefined;
+	};
+	let showMatch = () => {
+		timer.abort(); //just in case
+		beforeTeleop = true;
+		mode = 'Standby';
+		state = State.AWAIT_MATCH;
 	};
 	function fieldUpdate(message: MessageEvent) {
 		// console.log(JSON.parse(message.data));
@@ -386,11 +393,11 @@
 				// console.log('prior state: ' + parseState(state));
 				switch (state) {
 					case State.PRE_START:
+						timer.reset();
 						if (type == 'SHOW_PREVIEW' || type == 'SHOW_MATCH') {
-							//trigger bottom bar
-							state = State.AWAIT_MATCH;
+							showMatch();
 						} else if (type == 'START_MATCH') {
-							//trigger bottom bar
+							beforeTeleop = true;
 							current = field;
 							state = State.BEGIN_MATCH;
 						}
@@ -398,43 +405,49 @@
 					case State.AWAIT_MATCH:
 						current = field;
 						if (type == 'START_MATCH') {
+							current = field;
 							state = State.BEGIN_MATCH;
 						}
 						break;
 					case State.BEGIN_MATCH:
-						// console.log('Match Started');
+						timer.reset();
+						timer.start();
+						resultsData = undefined;
 						if (matchTimeout != undefined) {
 							console.log("Match Timeout didn't abort or end");
 							clearTimeout(matchTimeout);
 						}
-						//
-						// times['tsStart'] = JSON.parse(message.data)['ts'];
-						// times['localStart'] = Date.now();
-						//
 						matchTimeout = setTimeout(endGame, 150000);
 						state = State.IN_MATCH;
+
+						data = JSON.parse(message.data);
+
 						break;
 					case State.IN_MATCH:
 						if (type == 'ABORT_MATCH') {
-							//
-							// console.log('Match Aborted');
-							//
+							timer.abort();
 							clearTimeout(matchTimeout);
 							matchTimeout = undefined;
+
+							beforeTeleop = true;
+
 							state = State.AWAIT_MATCH;
 						} else if (type == 'SCORE_UPDATE' && current == field) {
-							//accept score updates
+							data = JSON.parse(message.data);
 						}
 						break;
 					case State.AWAIT_RESULTS:
 						if (type == 'SHOW_RESULTS') {
 							state = State.RESULTS_SHOWN;
+							resultsData = JSON.parse(message.data);
 							resultsTimeout = setTimeout(closeResults, 20000);
 						} else if (type == 'START_MATCH') {
 							current = field;
 							state = State.BEGIN_MATCH;
 						} else if (type == 'SHOW_MATCH') {
 							current = field;
+							beforeTeleop = true;
+
 							state = State.AWAIT_MATCH;
 						}
 						break;
@@ -447,14 +460,14 @@
 						} else if (type == 'SHOW_MATCH') {
 							clearTimeout(resultsTimeout);
 							resultsTimeout = undefined;
-							state = State.AWAIT_MATCH;
-							current = field;
+							showMatch();
 						}
 						break;
 				}
 
 				switch (resultsState) {
 					case ResultsState.NO_RESULTS:
+						resultsData = undefined;
 						if (state == State.AWAIT_RESULTS) {
 							resultsState = ResultsState.AWAIT_FULL;
 						}
@@ -462,12 +475,13 @@
 					case ResultsState.AWAIT_FULL:
 						if (type == 'SHOW_RESULTS') {
 							resultsState = ResultsState.FULL_RESULTS;
-							//show full results thing
+							showFullResults = true;
 						} else if (
 							state == State.AWAIT_MATCH ||
 							state == State.BEGIN_MATCH ||
 							state == State.IN_MATCH
 						) {
+							awaitMini = true;
 							resultsState = ResultsState.AWAIT_MINI;
 						}
 						break;
@@ -478,16 +492,18 @@
 							state == State.BEGIN_MATCH ||
 							state == State.IN_MATCH
 						) {
+							showFullResults = false;
 							resultsState = ResultsState.NO_RESULTS;
-							//hide full results thing
 						}
 						break;
 
 					case ResultsState.AWAIT_MINI:
 						if (type == 'SHOW_RESULTS') {
 							resultsState = ResultsState.MINI_RESULTS;
-							//show mini results thing
+							awaitMini = false;
+							showMiniResults = true;
 							setTimeout(() => {
+								showMiniResults = false;
 								resultsState = ResultsState.NO_RESULTS;
 							}, 20000);
 						}
@@ -496,11 +512,11 @@
 					case ResultsState.MINI_RESULTS:
 						if (state == State.AWAIT_RESULTS) {
 							resultsState = ResultsState.AWAIT_FULL;
+							showMiniResults = false;
 						}
 						break;
 				}
 				// console.log('post state: ' + parseState(state));
-
 			}
 		} catch (e) {
 			// console.error(e);
@@ -509,7 +525,7 @@
 </script>
 
 <main>
-	<overlay class={showResults ? 'hidden' : ''}>
+	<overlay class={showFullResults ? 'hidden' : ''}>
 		<pos id="blueSampleNet">
 			<ScoreBadge
 				alliance="blue"
@@ -671,7 +687,8 @@
 	</overlay>
 
 	<results
-		class="{showResults ? '' : 'hidden'} {data?.type == 'SHOW_PREVIEW' || data?.type == 'SHOW_MATCH'
+		class="{showFullResults ? '' : 'hidden'} {data?.type == 'SHOW_PREVIEW' ||
+		data?.type == 'SHOW_MATCH'
 			? ''
 			: 'mt2'}"
 	>
