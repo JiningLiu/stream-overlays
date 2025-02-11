@@ -11,6 +11,7 @@
 	import ResultsScoreBreakdown from './results/ResultsScoreBreakdown.svelte';
 
 	import { onMount } from 'svelte';
+	import { parse } from 'svelte/compiler';
 
 	//FSM
 	const processingTypes = [
@@ -25,7 +26,6 @@
 	enum State {
 		PRE_START,
 		AWAIT_MATCH,
-		BEGIN_MATCH,
 		IN_MATCH,
 		AWAIT_RESULTS,
 		RESULTS_SHOWN
@@ -37,12 +37,10 @@
 			case 1:
 				return 'AWAIT_MATCH';
 			case 2:
-				return 'BEGIN_MATCH';
-			case 3:
 				return 'IN_MATCH';
-			case 4:
+			case 3:
 				return 'AWAIT_RESULTS';
-			case 5:
+			case 4:
 				return 'RESULTS_SHOWN';
 		}
 	}
@@ -154,8 +152,9 @@
 
 		// Start the timer
 		start(): void {
-			if (this.timerRunning) return; // Prevent starting the timer if it's already running
 
+			if (this.timerRunning) return; // Prevent starting the timer if it's already running
+			console.log("timer start");
 			this.timerRunning = true;
 			this.remainingTime = this.timerStates[this.currentStateIndex];
 			this.startTime = performance.now();
@@ -177,6 +176,7 @@
 
 		// Abort the timer
 		abort(): void {
+			console.log("timer abort");
 			this.timerRunning = false;
 		}
 
@@ -214,6 +214,7 @@
 
 		// Reset the timer to its initial state
 		reset(): void {
+			console.log("(reset)");
 			this.abort(); // Abort any running timer
 			this.currentStateIndex = 0; // Start from the first timer state (30 seconds)
 		}
@@ -308,11 +309,38 @@
 			socket = new WebSocket(socketUrl);
 
 			socket.onopen = () => {
+				setTimeout(() => {
+					console.log(Date.now());
+					started = true;
+
+					let maxTS: number = 0; //finds the highest TS value
+					let maxIndex: number = 0; //finds the index of the highest TS
+
+					for (let index = 0; index < chaosArray.length; index++) {
+						let num = JSON.parse(chaosArray[index].data)['ts'];
+						if(!processingTypes.includes(JSON.parse(chaosArray[index].data)['type'])){
+							continue;
+						}
+
+						if (maxTS < num) {
+							maxIndex = index;
+							maxTS = JSON.parse(chaosArray[index].data)['ts'];
+						}
+					}
+					console.log(JSON.parse(chaosArray[maxIndex].data)['type']);
+					fieldUpdate(chaosArray[maxIndex]); //update only the highest index
+					
+				}, 1000);
 				console.log('FTCLive display WebSocket connected.');
 			};
 
 			socket.onmessage = (event) => {
-				fieldUpdate(event);
+				
+				if (!started) {					
+					chaosArray.push(event);
+				}
+				else
+					fieldUpdate(event);
 				/*
 				const parsed = JSON.parse(event.data);
 				if (processingTypes.includes(parsed.type)) {
@@ -380,33 +408,46 @@
 	};
 
 	let showMatch = () => {
-		timer.abort(); //just in case
+		let oldState = parseState(state);
+		timer.reset(); //just in case
 		beforeTeleop = true;
 		mode = 'Standby';
 		state = State.AWAIT_MATCH;
+		console.log('DEBUG INFO','prior:'+oldState,'post: '+ parseState(state), 'type: showMethod');
+
 	};
 
-	let startMatch = (field:number) => {
+	let startMatch = (field: number) => {
+		let oldState = parseState(state);
 		beforeTeleop = true;
-		state = State.BEGIN_MATCH;
-		current = field;
+		
+		timer.reset();
+		timer.start();
+		resultsData = undefined;
+		if (matchTimeout != undefined) {
+			console.log("Match Timeout didn't abort or end");
+			clearTimeout(matchTimeout);
+		}
+		matchTimeout = setTimeout(endGame, 150000);
+		state = State.IN_MATCH;
+		console.log('DEBUG INFO','prior:'+oldState,'post: '+ parseState(state), 'type: startMethod');
+
 	};
 
 	function fieldUpdate(message: MessageEvent) {
-		// console.log(JSON.parse(message.data));
 		try {
 			const field = JSON.parse(message.data)['params']['field'];
 			const type = JSON.parse(message.data)['type'];
 
 			if (processingTypes.includes(type)) {
-				// console.log('prior state: ' + parseState(state));
+				let oldState = parseState(state);
 				switch (state) {
 					case State.PRE_START:
 						timer.reset();
 						if (type == 'SHOW_PREVIEW' || type == 'SHOW_MATCH') {
 							showMatch();
 							data = JSON.parse(message.data);
-						} else if (type == 'START_MATCH') {
+						} else if (type == 'START_MATCH'||type == 'SCORE_UPDATE') {
 							startMatch(field);
 							data = JSON.parse(message.data);
 						}
@@ -418,23 +459,10 @@
 							data = JSON.parse(message.data);
 						}
 						break;
-					case State.BEGIN_MATCH:
-						timer.reset();
-						timer.start();
-						resultsData = undefined;
-						if (matchTimeout != undefined) {
-							console.log("Match Timeout didn't abort or end");
-							clearTimeout(matchTimeout);
-						}
-						matchTimeout = setTimeout(endGame, 150000);
-						state = State.IN_MATCH;
-
-
-						break;
 					case State.IN_MATCH:
 						if (type == 'ABORT_MATCH') {
-							mode = 'Aborted'
-							timer.abort();
+							mode = 'Aborted';
+							timer.reset();
 							clearTimeout(matchTimeout);
 							matchTimeout = undefined;
 
@@ -443,7 +471,7 @@
 							state = State.AWAIT_MATCH;
 						} else if (current == field) {
 							data = JSON.parse(message.data);
-						} 
+						}
 						break;
 					case State.AWAIT_RESULTS:
 						if (type == 'SHOW_RESULTS') {
@@ -452,11 +480,9 @@
 						} else if (type == 'START_MATCH') {
 							startMatch(field);
 							data = JSON.parse(message.data);
-
 						} else if (type == 'SHOW_MATCH') {
 							showMatch();
 							data = JSON.parse(message.data);
-
 						}
 						break;
 					case State.RESULTS_SHOWN:
@@ -466,14 +492,12 @@
 
 							startMatch(field);
 							data = JSON.parse(message.data);
-
 						} else if (type == 'SHOW_MATCH') {
 							clearTimeout(resultsTimeout);
 							resultsTimeout = undefined;
 
 							showMatch();
 							data = JSON.parse(message.data);
-
 						}
 						break;
 				}
@@ -493,7 +517,6 @@
 							showFullResults = true;
 						} else if (
 							state == State.AWAIT_MATCH ||
-							state == State.BEGIN_MATCH ||
 							state == State.IN_MATCH
 						) {
 							awaitMini = true;
@@ -504,7 +527,6 @@
 					case ResultsState.FULL_RESULTS:
 						if (
 							state == State.AWAIT_MATCH ||
-							state == State.BEGIN_MATCH ||
 							state == State.IN_MATCH
 						) {
 							showFullResults = false;
@@ -533,7 +555,7 @@
 						}
 						break;
 				}
-				// console.log('post state: ' + parseState(state));
+				console.log('DEBUG INFO','prior:'+oldState,'post: '+ parseState(state), 'type: '+type);
 			}
 		} catch (e) {
 			// console.error(e);
@@ -658,6 +680,7 @@
 			<div class="vgrid s12">
 				<InfoBanner text="{infoBannerText}{data?.params?.matchName}" />
 				<div class="hgrid s12">
+					<!-- the blue and red ones that have the big number in it -->
 					<TotalScoreCard
 						alliance="blue"
 						score={(
