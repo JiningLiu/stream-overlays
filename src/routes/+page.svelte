@@ -12,6 +12,7 @@
 
 	import { onMount } from 'svelte';
 
+	//FSM
 	const processingTypes = [
 		'START_MATCH',
 		'ABORT_MATCH',
@@ -20,7 +21,58 @@
 		'SCORE_UPDATE',
 		'SHOW_RESULTS'
 	];
+	
+	enum State {
+		PRE_START,
+		AWAIT_MATCH,
+		BEGIN_MATCH,
+		IN_MATCH,
+		AWAIT_RESULTS,
+		RESULTS_SHOWN
+	}
+	function parseState(n: number) {
+		switch (n) {
+			case 0:
+				return 'PRE_START';
+			case 1:
+				return 'AWAIT_MATCH';
+			case 2:
+				return 'BEGIN_MATCH';
+			case 3:
+				return 'IN_MATCH';
+			case 4:
+				return 'AWAIT_RESULTS';
+			case 5:
+				return 'RESULTS_SHOWN';
+		}
+	}
 
+	enum ResultsState {
+		NO_RESULTS,
+		AWAIT_FULL,
+		AWAIT_MINI,
+		FULL_RESULTS,
+		MINI_RESULTS
+	}
+
+
+	let current = 1;
+
+	let state: State = State.PRE_START;
+	let resultsState: ResultsState = ResultsState.NO_RESULTS;
+
+	let matchTimeout: number | undefined;
+	let resultsTimeout: number | undefined;
+
+	let times = {
+		tsStart:0,
+		localStart:0
+	};
+
+	let started = false;
+	let chaosArray: MessageEvent[] = [];
+
+	//things idk
 	type GameUpdate = {
 		type?: string;
 		params?: Params;
@@ -258,10 +310,17 @@
 			};
 
 			socket.onmessage = (event) => {
+				fieldUpdate(event);
+				/** Psuedo of old
+				 * if show results
+				 *   resultsData = event.data
+				 *   
+				*/
+				/*
 				const parsed = JSON.parse(event.data);
 				if (processingTypes.includes(parsed.type)) {
 					if (parsed.type === 'SHOW_RESULTS') {
-						resultsData = JSON.parse(event.data); //can't we do resultsData = parsed (but its only marginally better)
+						resultsData = JSON.parse(event.data); 
 						timer.abort();
 						time = 30;
 						mode = 'Standby';
@@ -296,7 +355,7 @@
 						beforeTeleop = true;
 					}
 					showResults = false;
-				}
+				}*/
 			};
 
 			socket.onclose = () => {
@@ -305,7 +364,148 @@
 		} else {
 			location.href = './generate';
 		}
+
 	});
+
+	let endGame = () => {
+		console.log('match over: local = ', Date.now()-times['localStart'], 'ts = ', Date.now()-times['tsStart']);
+		state = State.AWAIT_RESULTS;
+		matchTimeout = undefined;
+	};
+	let closeResults = () => {
+		state = State.AWAIT_MATCH;
+		resultsTimeout = undefined;
+	};
+	function fieldUpdate(message: MessageEvent) {
+		// console.log(JSON.parse(message.data));
+		try {
+			const field = JSON.parse(message.data)['params']['field'];
+			const type = JSON.parse(message.data)['type'];
+
+			if (processingTypes.includes(type)) {
+				// console.log('prior state: ' + parseState(state));
+				switch (state) {
+					case State.PRE_START:
+						if (type == 'SHOW_PREVIEW' || type == 'SHOW_MATCH') {
+							//trigger bottom bar
+							state = State.AWAIT_MATCH;
+						} else if (type == 'START_MATCH') {
+							//trigger bottom bar
+							current = field;
+							state = State.BEGIN_MATCH;
+						}
+						break;
+					case State.AWAIT_MATCH:
+						current = field;
+						if (type == 'START_MATCH') {
+							state = State.BEGIN_MATCH;
+						}
+						break;
+					case State.BEGIN_MATCH:
+						// console.log('Match Started');
+						if (matchTimeout != undefined) {
+							console.log("Match Timeout didn't abort or end");
+							clearTimeout(matchTimeout);
+						}
+						//
+						// times['tsStart'] = JSON.parse(message.data)['ts'];
+						// times['localStart'] = Date.now();
+						//
+						matchTimeout = setTimeout(endGame, 150000);
+						state = State.IN_MATCH;
+						break;
+					case State.IN_MATCH:
+						if (type == 'ABORT_MATCH') {
+							//
+							// console.log('Match Aborted');
+							//
+							clearTimeout(matchTimeout);
+							matchTimeout = undefined;
+							state = State.AWAIT_MATCH;
+						} else if (type == 'SCORE_UPDATE' && current == field) {
+							//accept score updates
+						}
+						break;
+					case State.AWAIT_RESULTS:
+						if (type == 'SHOW_RESULTS') {
+							state = State.RESULTS_SHOWN;
+							resultsTimeout = setTimeout(closeResults, 20000);
+						} else if (type == 'START_MATCH') {
+							current = field;
+							state = State.BEGIN_MATCH;
+						} else if (type == 'SHOW_MATCH') {
+							current = field;
+							state = State.AWAIT_MATCH;
+						}
+						break;
+					case State.RESULTS_SHOWN:
+						if (type == 'START_MATCH') {
+							clearTimeout(resultsTimeout);
+							resultsTimeout = undefined;
+							current = field;
+							state = State.BEGIN_MATCH;
+						} else if (type == 'SHOW_MATCH') {
+							clearTimeout(resultsTimeout);
+							resultsTimeout = undefined;
+							state = State.AWAIT_MATCH;
+							current = field;
+						}
+						break;
+				}
+
+				switch (resultsState) {
+					case ResultsState.NO_RESULTS:
+						if (state == State.AWAIT_RESULTS) {
+							resultsState = ResultsState.AWAIT_FULL;
+						}
+						break;
+					case ResultsState.AWAIT_FULL:
+						if (type == 'SHOW_RESULTS') {
+							resultsState = ResultsState.FULL_RESULTS;
+							//show full results thing
+						} else if (
+							state == State.AWAIT_MATCH ||
+							state == State.BEGIN_MATCH ||
+							state == State.IN_MATCH
+						) {
+							resultsState = ResultsState.AWAIT_MINI;
+						}
+						break;
+
+					case ResultsState.FULL_RESULTS:
+						if (
+							state == State.AWAIT_MATCH ||
+							state == State.BEGIN_MATCH ||
+							state == State.IN_MATCH
+						) {
+							resultsState = ResultsState.NO_RESULTS;
+							//hide full results thing
+						}
+						break;
+
+					case ResultsState.AWAIT_MINI:
+						if (type == 'SHOW_RESULTS') {
+							resultsState = ResultsState.MINI_RESULTS;
+							//show mini results thing
+							setTimeout(() => {
+								resultsState = ResultsState.NO_RESULTS;
+							}, 20000);
+						}
+						break;
+
+					case ResultsState.MINI_RESULTS:
+						if (state == State.AWAIT_RESULTS) {
+							resultsState = ResultsState.AWAIT_FULL;
+						}
+						break;
+				}
+				// console.log('post state: ' + parseState(state));
+
+			}
+		} catch (e) {
+			// console.error(e);
+		}
+	}
 </script>
 
 <main>
