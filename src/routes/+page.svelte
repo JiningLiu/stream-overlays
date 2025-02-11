@@ -370,6 +370,7 @@
 
 		matchTimeout = undefined;
 	};
+
 	let closeResults = () => {
 		beforeTeleop = true;
 
@@ -377,12 +378,20 @@
 
 		resultsTimeout = undefined;
 	};
+
 	let showMatch = () => {
 		timer.abort(); //just in case
 		beforeTeleop = true;
 		mode = 'Standby';
 		state = State.AWAIT_MATCH;
 	};
+
+	let startMatch = (field:number) => {
+		beforeTeleop = true;
+		state = State.BEGIN_MATCH;
+		current = field;
+	};
+
 	function fieldUpdate(message: MessageEvent) {
 		// console.log(JSON.parse(message.data));
 		try {
@@ -396,17 +405,17 @@
 						timer.reset();
 						if (type == 'SHOW_PREVIEW' || type == 'SHOW_MATCH') {
 							showMatch();
+							data = JSON.parse(message.data);
 						} else if (type == 'START_MATCH') {
-							beforeTeleop = true;
-							current = field;
-							state = State.BEGIN_MATCH;
+							startMatch(field);
+							data = JSON.parse(message.data);
 						}
 						break;
 					case State.AWAIT_MATCH:
 						current = field;
 						if (type == 'START_MATCH') {
-							current = field;
-							state = State.BEGIN_MATCH;
+							startMatch(field);
+							data = JSON.parse(message.data);
 						}
 						break;
 					case State.BEGIN_MATCH:
@@ -420,11 +429,11 @@
 						matchTimeout = setTimeout(endGame, 150000);
 						state = State.IN_MATCH;
 
-						data = JSON.parse(message.data);
 
 						break;
 					case State.IN_MATCH:
 						if (type == 'ABORT_MATCH') {
+							mode = 'Aborted'
 							timer.abort();
 							clearTimeout(matchTimeout);
 							matchTimeout = undefined;
@@ -432,35 +441,39 @@
 							beforeTeleop = true;
 
 							state = State.AWAIT_MATCH;
-						} else if (type == 'SCORE_UPDATE' && current == field) {
+						} else if (current == field) {
 							data = JSON.parse(message.data);
-						}
+						} 
 						break;
 					case State.AWAIT_RESULTS:
 						if (type == 'SHOW_RESULTS') {
 							state = State.RESULTS_SHOWN;
-							resultsData = JSON.parse(message.data);
 							resultsTimeout = setTimeout(closeResults, 20000);
 						} else if (type == 'START_MATCH') {
-							current = field;
-							state = State.BEGIN_MATCH;
-						} else if (type == 'SHOW_MATCH') {
-							current = field;
-							beforeTeleop = true;
+							startMatch(field);
+							data = JSON.parse(message.data);
 
-							state = State.AWAIT_MATCH;
+						} else if (type == 'SHOW_MATCH') {
+							showMatch();
+							data = JSON.parse(message.data);
+
 						}
 						break;
 					case State.RESULTS_SHOWN:
 						if (type == 'START_MATCH') {
 							clearTimeout(resultsTimeout);
 							resultsTimeout = undefined;
-							current = field;
-							state = State.BEGIN_MATCH;
+
+							startMatch(field);
+							data = JSON.parse(message.data);
+
 						} else if (type == 'SHOW_MATCH') {
 							clearTimeout(resultsTimeout);
 							resultsTimeout = undefined;
+
 							showMatch();
+							data = JSON.parse(message.data);
+
 						}
 						break;
 				}
@@ -474,6 +487,8 @@
 						break;
 					case ResultsState.AWAIT_FULL:
 						if (type == 'SHOW_RESULTS') {
+							resultsData = JSON.parse(message.data);
+
 							resultsState = ResultsState.FULL_RESULTS;
 							showFullResults = true;
 						} else if (
@@ -499,6 +514,8 @@
 
 					case ResultsState.AWAIT_MINI:
 						if (type == 'SHOW_RESULTS') {
+							resultsData = JSON.parse(message.data);
+
 							resultsState = ResultsState.MINI_RESULTS;
 							awaitMini = false;
 							showMiniResults = true;
