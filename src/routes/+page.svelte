@@ -228,7 +228,6 @@
 
 		//only for use of the special start match
 		setTime(timeElapsed:number, beginTime:number): void {
-			timer.abort();
 			console.log("av2","timeElapse: "+timeElapsed,"beginTime: "+beginTime);
 			this.timerRunning = true;
 			if (timeElapsed >= 158){
@@ -390,12 +389,24 @@
 							maxTS = JSON.parse(chaosArray[index].data)['ts'];
 						}
 					}
-					// console.log(JSON.parse(chaosArray[maxIndex].data)['type']);
-					startTime = maxTS;
-					data = JSON.parse(chaosArray[maxIndex].data);
+					let recentData = JSON.parse(chaosArray[maxIndex].data);
 
-					// fieldUpdate(chaosArray[maxIndex]); //update only the highest index
-					timer.setTime((Date.now()-maxStartTS)/1000, maxStartTS-Date.now());
+					// console.log(JSON.parse(chaosArray[maxIndex].data)['type']);
+					if(recentData['type']=='START_MATCH'|| recentData['type']=='SCORE_UPDATE'){
+						data = JSON.parse(chaosArray[maxIndex].data);
+						timer.setTime((Date.now()-maxStartTS)/1000, maxStartTS-Date.now());
+						state = State.IN_MATCH;
+						matchTimeout = setTimeout(endGame, 158000+maxStartTS-Date.now());
+					}else if(recentData['type']=='SHOW_PREVIEW'||recentData['type']=='SHOW_MATCH'){
+						data = JSON.parse(chaosArray[maxIndex].data);
+						mode = 'Standby';
+						state = State.AWAIT_MATCH;
+					}else{
+						fieldUpdate(chaosArray[maxIndex]);
+					}
+					
+					
+					
 
 					
 				}, 1000);
@@ -478,6 +489,9 @@
 						} else if (type == 'START_MATCH'||type == 'SCORE_UPDATE') {
 							startMatch(field);
 							data = JSON.parse(message.data);
+						}else if (type == 'SHOW_RESULTS') {
+							state = State.RESULTS_SHOWN;
+							resultsTimeout = setTimeout(closeResults, 20000);
 						}
 						break;
 					case State.AWAIT_MATCH:
