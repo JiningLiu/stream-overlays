@@ -404,11 +404,6 @@
 					}else{
 						fieldUpdate(chaosArray[maxIndex]);
 					}
-					
-					
-					
-
-					
 				}, 1000);
 				console.log('FTCLive display WebSocket connected.');
 			};
