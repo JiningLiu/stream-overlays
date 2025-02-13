@@ -115,16 +115,53 @@
 			camFrame.src = camUrl;
 		}
 	}
+	function clear(){
+		document.querySelectorAll('input.overlay').forEach((input) => {(input as HTMLInputElement).value = '';console.log(input.innerHTML)});
+		document.querySelectorAll('input.cam').forEach((input) => {(input as HTMLInputElement).value = '';});
+		
+	camHost = 'rpi.local';
+	camPort = '8889';
+	camPath = 'cam';
 
+	overlayHost = 'localhost';
+	overlayPort = '5173';
+	overlaySocketHost = 'localhost';
+	overlayEventCode = 'ustxcgm4';
+
+	overlayInfoBannerText = 'GEMS Emerald League Meet 2';
+	overlayBlueSampleNetX = '';
+	overlayBlueSampleNetY = '';
+	overlayBlueSampleLowX = '';
+	overlayBlueSampleLowY = '';
+	overlayBlueSampleHighX = '';
+	overlayBlueSampleHighY = '';
+	overlayBlueSpecimenLowX = '';
+	overlayBlueSpecimenLowY = '';
+	overlayBlueSpecimenHighX = '';
+	overlayBlueSpecimenHighY = '';
+	overlayRedSampleNetX = '';
+	overlayRedSampleNetY = '';
+	overlayRedSampleLowX = '';
+	overlayRedSampleLowY = '';
+	overlayRedSampleHighX = '';
+	overlayRedSampleHighY = '';
+	overlayRedSpecimenLowX = '';
+	overlayRedSpecimenLowY = '';
+	overlayRedSpecimenHighX = '';
+	overlayRedSpecimenHighY = '';
+	
+		requestAnimationFrame(() =>updateOverlay());
+		console.log("cleared edition");
+	}
 	function updateOverlay() {
-
+		console.log("updating overlay");
 		localStorage.setItem('camHost',camHost);
 		localStorage.setItem('camPort',camPort);
 		localStorage.setItem('camPath',camPath);
 
 		localStorage.setItem('overlayHost',overlayHost);
 		localStorage.setItem('overlayPort',overlayPort);
-		
+
 		localStorage.setItem('overlaySocketHost',overlaySocketHost);
 		localStorage.setItem('overlayEventCode',overlayEventCode);
 
@@ -158,45 +195,45 @@
 		overlayUrl = `http://${encodeURIComponent(overlayHost)}${
 			encodeURIComponent(overlayPort) ? ':' : ''
 		}${encodeURIComponent(overlayPort)}/?socketUrl=ws%3A%2F%2F${encodeURIComponent(
-			overlaySocketHost
+			overlaySocketHost||"localhost"
 		)}%2Fstream%2Fdisplay%2Fcommand%2F%3Fcode%3D${encodeURIComponent(
-			overlayEventCode
+			overlayEventCode||"ustxcgm4"
 		)}&infoBannerText=${encodeURIComponent(
-			overlayInfoBannerText
+			overlayInfoBannerText||"GEMS Emerald League Meet 2"
 		)}&blueSampleNetX=${encodeURIComponent(
-			overlayBlueSampleNetX
+			overlayBlueSampleNetX||""
 		)}&blueSampleNetY=${encodeURIComponent(
-			overlayBlueSampleNetY
+			overlayBlueSampleNetY||""
 		)}&blueSampleLowX=${encodeURIComponent(
-			overlayBlueSampleLowX
+			overlayBlueSampleLowX||""
 		)}&blueSampleLowY=${encodeURIComponent(
-			overlayBlueSampleLowY
+			overlayBlueSampleLowY||""
 		)}&blueSampleHighX=${encodeURIComponent(
-			overlayBlueSampleHighX
+			overlayBlueSampleHighX||""
 		)}&blueSampleHighY=${encodeURIComponent(
-			overlayBlueSampleHighY
+			overlayBlueSampleHighY||""
 		)}&blueSpecimenLowX=${encodeURIComponent(
-			overlayBlueSpecimenLowX
+			overlayBlueSpecimenLowX||""
 		)}&blueSpecimenLowY=${encodeURIComponent(
-			overlayBlueSpecimenLowY
+			overlayBlueSpecimenLowY||""
 		)}&blueSpecimenHighX=${encodeURIComponent(
-			overlayBlueSpecimenHighX
+			overlayBlueSpecimenHighX||""
 		)}&blueSpecimenHighY=${encodeURIComponent(
-			overlayBlueSpecimenHighY
+			overlayBlueSpecimenHighY||""
 		)}&redSampleNetX=${encodeURIComponent(overlayRedSampleNetX)}&redSampleNetY=${encodeURIComponent(
-			overlayRedSampleNetY
+			overlayRedSampleNetY||""
 		)}&redSampleLowX=${encodeURIComponent(overlayRedSampleLowX)}&redSampleLowY=${encodeURIComponent(
-			overlayRedSampleLowY
+			overlayRedSampleLowY||""
 		)}&redSampleHighX=${encodeURIComponent(
-			overlayRedSampleHighX
+			overlayRedSampleHighX||""
 		)}&redSampleHighY=${encodeURIComponent(
-			overlayRedSampleHighY
+			overlayRedSampleHighY||""
 		)}&redSpecimenLowX=${encodeURIComponent(
-			overlayRedSpecimenLowX
+			overlayRedSpecimenLowX||""
 		)}&redSpecimenLowY=${encodeURIComponent(
-			overlayRedSpecimenLowY
+			overlayRedSpecimenLowY||""
 		)}&redSpecimenHighX=${encodeURIComponent(
-			overlayRedSpecimenHighX
+			overlayRedSpecimenHighX||""
 		)}&redSpecimenHighY=${encodeURIComponent(overlayRedSpecimenHighY)}`;
 		const overlayFrame = document.getElementById('overlay') as HTMLIFrameElement;
 		if (overlayFrame) {
@@ -246,6 +283,7 @@
 	<p class="mh1">
 		Press <b>Enter</b> on any text field to reload or apply changes for respective iframe.
 	</p>
+	<p>Press <button on:click={clear}>Me</button> to clear all changes</p>
 
 	<div class="vstack mh1">
 		<h2>Camera</h2>

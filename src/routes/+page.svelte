@@ -367,27 +367,63 @@
 
 			socket.onopen = () => {
 				setTimeout(() => {
+					let sortedChaos = chaosArray.sort(
+						(a,b)=>{
+							return JSON.parse(a.data)['ts'] - JSON.parse(b.data)['ts'];
+						});
+					console.log(sortedChaos);
 					started = true;
 
 					let maxTS: number = 0; //finds the highest TS value
 					let maxIndex: number = -1; //finds the index of the highest TS
 
+
 					let maxStartTS: number = 0; //get the most recent start match
-					for (let index = 0; index < chaosArray.length; index++) {
-						let num = JSON.parse(chaosArray[index].data)['ts'];
-						if (!processingTypes.includes(JSON.parse(chaosArray[index].data)['type'])) {
-							continue;
-						}
-						if (JSON.parse(chaosArray[index].data)['type'] == 'START_MATCH') {
-							if (maxStartTS < num) {
-								maxStartTS = JSON.parse(chaosArray[index].data)['ts'];
-							}
-						}
-						if (maxTS < num) {
-							maxIndex = index;
-							maxTS = JSON.parse(chaosArray[index].data)['ts'];
+
+					//last index of a start_match
+					for(let i = sortedChaos.length-1;i>=0;i--){
+						if((JSON.parse(sortedChaos[i].data)['type'] as string) == 'START_MATCH'){
+							// maxStartTS = JSON.parse(sortedChaos[i].data)['ts'];
+							break;
 						}
 					}
+					if(JSON.parse(sortedChaos[sortedChaos.length-1].data)['type'] == 'SCORE_UPDATE'){
+						for(let i = sortedChaos.length-1;i>=0;i--){
+							if(JSON.parse(sortedChaos[i].data)['type'] == 'START_MATCH'){
+								maxIndex = sortedChaos.length-1;
+								break;
+							}else if(JSON.parse(sortedChaos[i].data)['type'] == 'ABORT_MATCH'){
+								maxIndex = i;
+								break;
+
+							}
+						}
+					}
+					//
+					for(let i = sortedChaos.length-1;i>=0;i--){
+						if(JSON.parse(sortedChaos[i].data)['type'] == 'START_MATCH' || JSON.parse(sortedChaos[i].data)['type'] == 'SCORE_UPDATE'){
+							maxIndex = i;
+							break;
+						}
+					}
+					// for (let index = 0; index < chaosArray.length; index++) {
+					// 	let num = JSON.parse(chaosArray[index].data)['ts'];
+						
+					// 	if (!processingTypes.includes(JSON.parse(chaosArray[index].data)['type'])) {
+					// 		console.log('Invalid data type: ',JSON.parse(chaosArray[index].data)['type']);
+					// 		continue;
+					// 	}
+					// 	if (JSON.parse(chaosArray[index].data)['type'] == 'START_MATCH') {
+					// 		if (maxStartTS < num) {
+
+					// 			maxStartTS = JSON.parse(chaosArray[index].data)['ts'];
+					// 		}
+					// 	}
+					// 	if (maxTS < num) {
+					// 		maxIndex = index;
+					// 		maxTS = JSON.parse(chaosArray[index].data)['ts'];
+					// 	}
+					// }
 					if(maxIndex == -1) {
 						console.log('No valid data found');
 						return;
@@ -395,6 +431,7 @@
 					let recentData = JSON.parse(chaosArray[maxIndex].data);
 
 					// console.log(JSON.parse(chaosArray[maxIndex].data)['type']);
+					console.log(recentData['type']);
 					if (recentData['type'] == 'START_MATCH' || recentData['type'] == 'SCORE_UPDATE') {
 						data = JSON.parse(chaosArray[maxIndex].data);
 						timer.setTime((Date.now() - maxStartTS) / 1000, maxStartTS - Date.now());
@@ -429,7 +466,7 @@
 
 	let endGame = () => {
 		// timer.reset();
-		// console.log('match over: local = ', Date.now()-times['localStart'], 'ts = ', Date.now()-times['tsStart']);
+		console.log('endgame');
 		state = State.AWAIT_RESULTS;
 
 		matchTimeout = undefined;
@@ -437,18 +474,28 @@
 
 	let closeResults = () => {
 		beforeTeleop = true;
-
-		showMatch();
-
-		resultsTimeout = undefined;
-	};
-
-	let showMatch = () => {
 		let oldState = parseState(state);
 		timer.reset(); //just in case
 		beforeTeleop = true;
 		mode = 'Standby';
 		state = State.AWAIT_MATCH;
+		console.log(
+			'DEBUG INFO',
+			'prior:' + oldState,
+			'post: ' + parseState(state),
+			'type: closeResults'
+		);
+
+		resultsTimeout = undefined;
+	};
+
+	let showMatch = (field:number) => {
+		let oldState = parseState(state);
+		timer.reset(); //just in case
+		beforeTeleop = true;
+		mode = 'Standby';
+		state = State.AWAIT_MATCH;
+		current = field;
 		console.log(
 			'DEBUG INFO',
 			'prior:' + oldState,
@@ -460,6 +507,7 @@
 	let startMatch = (field: number) => {
 		let oldState = parseState(state);
 		beforeTeleop = true;
+		current = field;
 
 		timer.reset();
 		timer.start();
@@ -489,7 +537,7 @@
 					case State.PRE_START:
 						timer.reset();
 						if (type == 'SHOW_PREVIEW' || type == 'SHOW_MATCH') {
-							showMatch();
+							showMatch(field);
 							data = JSON.parse(message.data);
 						} else if (type == 'START_MATCH' || type == 'SCORE_UPDATE') {
 							startMatch(field);
@@ -500,8 +548,7 @@
 						}
 						break;
 					case State.AWAIT_MATCH:
-						current = field;
-						if(type != 'SHOW_PREVIEW' && type != 'SHOW_RESULTS') {
+						if(type != 'SHOW_PREVIEW' && type != 'SHOW_RESULTS' && field == current) {
 							data = JSON.parse(message.data);
 						}
 						if (type == 'START_MATCH') {
@@ -530,7 +577,7 @@
 							startMatch(field);
 							data = JSON.parse(message.data);
 						} else if (type == 'SHOW_MATCH') {
-							showMatch();
+							showMatch(field);
 							data = JSON.parse(message.data);
 						}
 						break;
@@ -545,7 +592,7 @@
 							clearTimeout(resultsTimeout);
 							resultsTimeout = undefined;
 
-							showMatch();
+							showMatch(field);
 							data = JSON.parse(message.data);
 						}
 						break;
@@ -604,6 +651,9 @@
 					'post: ' + parseState(state),
 					'type: ' + type
 				);
+			}else{
+				console.log('Invalid data type: ',type);
+				console.log('Data: ',JSON.parse(message.data));
 			}
 		} catch (e) {
 			// console.error(e);
