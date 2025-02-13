@@ -8,7 +8,7 @@
 	let camPath = 'cam';
 
 	let overlayHost = 'localhost';
-	let overlayPort = '5173';
+	let overlayPort = '8000';
 	let overlaySocketHost = 'localhost';
 	let overlayEventCode = 'ustxcgm4';
 
@@ -44,9 +44,9 @@
 		camPath = localStorage.getItem('camPath') || 'cam';
 
 		overlayHost = localStorage.getItem('overlayHost') || 'localhost';
-		overlayPort = localStorage.getItem('overlayPort') || '5173';
-		overlaySocketHost = localStorage.getItem('overlayPort')||'localhost';
-		overlayEventCode = localStorage.getItem('overlayPort')||'ustxcgm4';
+		overlayPort = localStorage.getItem('overlayPort') || '8000';
+		overlaySocketHost = localStorage.getItem('overlaySocketHost')||'localhost';
+		overlayEventCode = localStorage.getItem('overlayEventCode')||'ustxcgm4';
 
 		overlayInfoBannerText = localStorage.getItem('bannerText') || 'GEMS Emerald League Meet 2';
 		overlayBlueSampleNetX = localStorage.getItem('overlayBlueSampleNetX') || '';
@@ -116,39 +116,56 @@
 		}
 	}
 	function clear(){
-		document.querySelectorAll('input.overlay').forEach((input) => {(input as HTMLInputElement).value = '';console.log(input.innerHTML)});
-		document.querySelectorAll('input.cam').forEach((input) => {(input as HTMLInputElement).value = '';});
-		
-	camHost = 'rpi.local';
-	camPort = '8889';
-	camPath = 'cam';
+		document.querySelectorAll('input.overlay').forEach((input) => {(input as HTMLInputElement).value = '';input.innerHTML=""});
+		document.querySelectorAll('input.cam').forEach((input) => {(input as HTMLInputElement).value = '';input.innerHTML=""});
+		/*
 
-	overlayHost = 'localhost';
-	overlayPort = '5173';
-	overlaySocketHost = 'localhost';
-	overlayEventCode = 'ustxcgm4';
+Host
 
-	overlayInfoBannerText = 'GEMS Emerald League Meet 2';
-	overlayBlueSampleNetX = '';
-	overlayBlueSampleNetY = '';
-	overlayBlueSampleLowX = '';
-	overlayBlueSampleLowY = '';
-	overlayBlueSampleHighX = '';
-	overlayBlueSampleHighY = '';
-	overlayBlueSpecimenLowX = '';
-	overlayBlueSpecimenLowY = '';
-	overlayBlueSpecimenHighX = '';
-	overlayBlueSpecimenHighY = '';
-	overlayRedSampleNetX = '';
-	overlayRedSampleNetY = '';
-	overlayRedSampleLowX = '';
-	overlayRedSampleLowY = '';
-	overlayRedSampleHighX = '';
-	overlayRedSampleHighY = '';
-	overlayRedSpecimenLowX = '';
-	overlayRedSpecimenLowY = '';
-	overlayRedSpecimenHighX = '';
-	overlayRedSpecimenHighY = '';
+Port
+
+Path
+
+
+Host
+
+Port
+
+FTCLive Host
+
+Event Code
+
+Info Banner Title*/
+		camHost = 'rpi.local';
+		camPort = '8889';
+		camPath = 'cam';
+
+		overlayHost = 'localhost';
+		overlayPort = '8000';
+		overlaySocketHost = 'localhost';
+		overlayEventCode = 'ustxcgm4';
+
+		overlayInfoBannerText = 'GEMS Emerald League Meet 2';
+		overlayBlueSampleNetX = '';
+		overlayBlueSampleNetY = '';
+		overlayBlueSampleLowX = '';
+		overlayBlueSampleLowY = '';
+		overlayBlueSampleHighX = '';
+		overlayBlueSampleHighY = '';
+		overlayBlueSpecimenLowX = '';
+		overlayBlueSpecimenLowY = '';
+		overlayBlueSpecimenHighX = '';
+		overlayBlueSpecimenHighY = '';
+		overlayRedSampleNetX = '';
+		overlayRedSampleNetY = '';
+		overlayRedSampleLowX = '';
+		overlayRedSampleLowY = '';
+		overlayRedSampleHighX = '';
+		overlayRedSampleHighY = '';
+		overlayRedSpecimenLowX = '';
+		overlayRedSpecimenLowY = '';
+		overlayRedSpecimenHighX = '';
+		overlayRedSpecimenHighY = '';
 	
 		requestAnimationFrame(() =>updateOverlay());
 		console.log("cleared edition");
@@ -195,9 +212,9 @@
 		overlayUrl = `http://${encodeURIComponent(overlayHost)}${
 			encodeURIComponent(overlayPort) ? ':' : ''
 		}${encodeURIComponent(overlayPort)}/?socketUrl=ws%3A%2F%2F${encodeURIComponent(
-			overlaySocketHost||"localhost"
+			overlaySocketHost
 		)}%2Fstream%2Fdisplay%2Fcommand%2F%3Fcode%3D${encodeURIComponent(
-			overlayEventCode||"ustxcgm4"
+			overlayEventCode
 		)}&infoBannerText=${encodeURIComponent(
 			overlayInfoBannerText||"GEMS Emerald League Meet 2"
 		)}&blueSampleNetX=${encodeURIComponent(
@@ -317,7 +334,7 @@
 
 			<div class="vstack">
 				<p>Port</p>
-				<input class="overlay" type="text" bind:value={overlayPort} placeholder="5173" />
+				<input class="overlay" type="text" bind:value={overlayPort} placeholder="8000" />
 			</div>
 
 			<div class="vstack">
