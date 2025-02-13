@@ -1,6 +1,8 @@
 <script lang="ts">
 	import { onMount } from 'svelte';
 
+	//storage system :)
+
 	let camHost = 'rpi.local';
 	let camPort = '8889';
 	let camPath = 'cam';
@@ -37,6 +39,37 @@
 	let importOverlayUrl = '';
 
 	onMount(() => {
+		camHost = localStorage.getItem('camHost') || 'rpi.local';
+		camPort = localStorage.getItem('camPort') || '8889';
+		camPath = localStorage.getItem('camPath') || 'cam';
+
+		overlayHost = localStorage.getItem('overlayHost') || 'localhost';
+		overlayPort = localStorage.getItem('overlayPort') || '5173';
+		overlaySocketHost = localStorage.getItem('overlayPort')||'localhost';
+		overlayEventCode = localStorage.getItem('overlayPort')||'ustxcgm4';
+
+		overlayInfoBannerText = localStorage.getItem('bannerText') || 'GEMS Emerald League Meet 2';
+		overlayBlueSampleNetX = localStorage.getItem('overlayBlueSampleNetX') || '';
+		overlayBlueSampleNetY = localStorage.getItem('overlayBlueSampleNetY') || '';
+		overlayBlueSampleLowX = localStorage.getItem('overlayBlueSampleLowX') || '';
+		overlayBlueSampleLowY = localStorage.getItem('overlayBlueSampleLowY') || '';
+		overlayBlueSampleHighX = localStorage.getItem('overlayBlueSampleHighX') || '';
+		overlayBlueSampleHighY = localStorage.getItem('overlayBlueSampleHighY') || '';
+		overlayBlueSpecimenLowX = localStorage.getItem('overlayBlueSpecimenLowX') || '';
+		overlayBlueSpecimenLowY = localStorage.getItem('overlayBlueSpecimenLowY') || '';
+		overlayBlueSpecimenHighX = localStorage.getItem('overlayBlueSpecimenHighX') || '';
+		overlayBlueSpecimenHighY = localStorage.getItem('overlayBlueSpecimenHighY') || '';
+		overlayRedSampleNetX = localStorage.getItem('overlayRedSampleNetX') || '';
+		overlayRedSampleNetY = localStorage.getItem('overlayRedSampleNetY') || '';
+		overlayRedSampleLowX = localStorage.getItem('overlayRedSampleLowX') || '';
+		overlayRedSampleLowY = localStorage.getItem('overlayRedSampleLowY') || '';
+		overlayRedSampleHighX = localStorage.getItem('overlayRedSampleHighX') || '';
+		overlayRedSampleHighY = localStorage.getItem('overlayRedSampleHighY') || '';
+		overlayRedSpecimenLowX = localStorage.getItem('overlayRedSpecimenLowX') || '';
+		overlayRedSpecimenLowY = localStorage.getItem('overlayRedSpecimenLowY') || '';
+		overlayRedSpecimenHighX = localStorage.getItem('overlayRedSpecimenHighX') || '';
+		overlayRedSpecimenHighY = localStorage.getItem('overlayRedSpecimenHighY') || '';
+
 		overlayHost = location.hostname;
 		overlayPort = location.port;
 
@@ -84,6 +117,44 @@
 	}
 
 	function updateOverlay() {
+
+		localStorage.setItem('camHost',camHost);
+		localStorage.setItem('camPort',camPort);
+		localStorage.setItem('camPath',camPath);
+
+		localStorage.setItem('overlayHost',overlayHost);
+		localStorage.setItem('overlayPort',overlayPort);
+		
+		localStorage.setItem('overlaySocketHost',overlaySocketHost);
+		localStorage.setItem('overlayEventCode',overlayEventCode);
+
+		localStorage.setItem('bannerText', overlayInfoBannerText);
+
+		localStorage.setItem('overlayBlueSampleNetX', overlayBlueSampleNetX);
+		localStorage.setItem('overlayBlueSampleNetY', overlayBlueSampleNetY);
+		localStorage.setItem('overlayBlueSampleLowX', overlayBlueSampleLowX);
+		localStorage.setItem('overlayBlueSampleLowY', overlayBlueSampleLowY);
+		localStorage.setItem('overlayBlueSampleHighX', overlayBlueSampleHighX);
+		localStorage.setItem('overlayBlueSampleHighY', overlayBlueSampleHighY);
+
+		localStorage.setItem('overlayBlueSpecimenLowX', overlayBlueSpecimenLowX);
+		localStorage.setItem('overlayBlueSpecimenLowY', overlayBlueSpecimenLowY);
+		localStorage.setItem('overlayBlueSpecimenHighX', overlayBlueSpecimenHighX);
+		localStorage.setItem('overlayBlueSpecimenHighY', overlayBlueSpecimenHighY);
+
+
+		localStorage.setItem('overlayRedSampleNetX', overlayRedSampleNetX);
+		localStorage.setItem('overlayRedSampleNetY', overlayRedSampleNetY);
+		localStorage.setItem('overlayRedSampleLowX', overlayRedSampleLowX);
+		localStorage.setItem('overlayRedSampleLowY', overlayRedSampleLowY);
+		localStorage.setItem('overlayRedSampleHighX', overlayRedSampleHighX);
+		localStorage.setItem('overlayRedSampleHighY', overlayRedSampleHighY);
+
+		localStorage.setItem('overlayRedSpecimenLowX', overlayRedSpecimenLowX);
+		localStorage.setItem('overlayRedSpecimenLowY', overlayRedSpecimenLowY);
+		localStorage.setItem('overlayRedSpecimenHighX', overlayRedSpecimenHighX);
+		localStorage.setItem('overlayRedSpecimenHighY', overlayRedSpecimenHighY);
+
 		overlayUrl = `http://${encodeURIComponent(overlayHost)}${
 			encodeURIComponent(overlayPort) ? ':' : ''
 		}${encodeURIComponent(overlayPort)}/?socketUrl=ws%3A%2F%2F${encodeURIComponent(

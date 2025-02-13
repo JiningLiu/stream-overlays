@@ -294,6 +294,7 @@
 	onMount(() => {
 		const params = new URLSearchParams(location.search);
 
+		//if there are elements for each tag, then it will set the locations for that element
 		const suppliedInfoBannerText = params.get('infoBannerText');
 		if (suppliedInfoBannerText) {
 			infoBannerText = suppliedInfoBannerText + ' • ';
@@ -359,6 +360,7 @@
 			redSpecimenHigh.style.setProperty('--y', params.get('redSpecimenHighY'));
 		}
 
+		//if we actually have a socket
 		const socketUrl = params.get('socketUrl');
 		if (socketUrl) {
 			socket = new WebSocket(socketUrl);
@@ -368,7 +370,7 @@
 					started = true;
 
 					let maxTS: number = 0; //finds the highest TS value
-					let maxIndex: number = 0; //finds the index of the highest TS
+					let maxIndex: number = -1; //finds the index of the highest TS
 
 					let maxStartTS: number = 0; //get the most recent start match
 					for (let index = 0; index < chaosArray.length; index++) {
@@ -385,6 +387,10 @@
 							maxIndex = index;
 							maxTS = JSON.parse(chaosArray[index].data)['ts'];
 						}
+					}
+					if(maxIndex == -1) {
+						console.log('No valid data found');
+						return;
 					}
 					let recentData = JSON.parse(chaosArray[maxIndex].data);
 
@@ -414,7 +420,9 @@
 			socket.onclose = () => {
 				console.log('FTCLive display WebSocket closed.');
 			};
-		} else {
+		}
+		//otherwise redirect to the builder
+		else {
 			location.href = './generate';
 		}
 	});
@@ -493,9 +501,11 @@
 						break;
 					case State.AWAIT_MATCH:
 						current = field;
+						if(type != 'SHOW_PREVIEW' && type != 'SHOW_RESULTS') {
+							data = JSON.parse(message.data);
+						}
 						if (type == 'START_MATCH') {
 							startMatch(field);
-							data = JSON.parse(message.data);
 						}
 						break;
 					case State.IN_MATCH:
