@@ -11,7 +11,7 @@
 	import ResultsScoreBreakdown from './results/ResultsScoreBreakdown.svelte';
 
 	import { onMount } from 'svelte';
-//
+	//
 	//FSM
 	const processingTypes = [
 		'START_MATCH',
@@ -152,7 +152,7 @@
 		// Start the timer
 		start(): void {
 			if (this.timerRunning) return; // Prevent starting the timer if it's already running
-			console.log("timer start");
+			console.log('timer start');
 			this.timerRunning = true;
 			this.phaseTotalTime = this.timerStates[this.currentStateIndex];
 			this.startTime = performance.now();
@@ -174,19 +174,19 @@
 
 		// Abort the timer
 		abort(): void {
-			console.log("abort");
+			console.log('abort');
 			this.timerRunning = false;
 		}
 		// set timer to 0
-		clear(): void{
-			console.log("clear")
+		clear(): void {
+			console.log('clear');
 			this.timerRunning = false;
 			this.phaseTotalTime = 0;
 			time = 0;
 		}
 		// Reset the timer to its initial state
 		reset(): void {
-			console.log("reset");
+			console.log('reset');
 			this.timerRunning = false;
 			this.currentStateIndex = 0; // Start from the first timer state (30 seconds)
 		}
@@ -203,7 +203,6 @@
 
 			time = Math.max(timeLeft, 0);
 
-			
 			if (timeLeft <= 0) {
 				this.advanceState();
 			} else {
@@ -227,47 +226,45 @@
 		}
 
 		//only for use of the special start match
-		setTime(timeElapsed:number, beginTime:number): void {
-			console.log("av2","timeElapse: "+timeElapsed,"beginTime: "+beginTime);
+		setTime(timeElapsed: number, beginTime: number): void {
+			console.log('av2', 'timeElapse: ' + timeElapsed, 'beginTime: ' + beginTime);
 			this.timerRunning = true;
-			if (timeElapsed >= 158){
-				console.log("over");
+			if (timeElapsed >= 158) {
+				console.log('over');
 				this.clear();
 				mode = 'Standby';
 				beforeTeleop = false;
 			}
 			// if past auto and transition
-			else if(timeElapsed>=38){
-				this.startTime = beginTime+38000;
+			else if (timeElapsed >= 38) {
+				this.startTime = beginTime + 38000;
 
-				console.log("tele");
+				console.log('tele');
 				this.currentStateIndex = 2;
 				mode = 'TeleOp';
 				beforeTeleop = false;
 			}
 			//if past auto
-			else if (timeElapsed>=30){
-				this.startTime = beginTime+30000;
+			else if (timeElapsed >= 30) {
+				this.startTime = beginTime + 30000;
 
-				console.log("trans");
+				console.log('trans');
 				this.currentStateIndex = 1;
 				mode = 'Wait';
 				beforeTeleop = true;
-
 			}
 			//if in auto
-			else{
+			else {
 				this.startTime = beginTime;
 
-				console.log("def: auto");
+				console.log('def: auto');
 				this.currentStateIndex = 0;
 				mode = 'Auto';
 				beforeTeleop = true;
-
 			}
 			// console.log("setTime");
 			this.phaseTotalTime = this.timerStates[this.currentStateIndex];
-			
+
 			// console.log(this.remainingTime, this.currentStateIndex);
 			this.tick();
 		}
@@ -376,10 +373,10 @@
 					let maxStartTS: number = 0; //get the most recent start match
 					for (let index = 0; index < chaosArray.length; index++) {
 						let num = JSON.parse(chaosArray[index].data)['ts'];
-						if(!processingTypes.includes(JSON.parse(chaosArray[index].data)['type'])){
+						if (!processingTypes.includes(JSON.parse(chaosArray[index].data)['type'])) {
 							continue;
 						}
-						if(JSON.parse(chaosArray[index].data)['type'] == 'START_MATCH'){
+						if (JSON.parse(chaosArray[index].data)['type'] == 'START_MATCH') {
 							if (maxStartTS < num) {
 								maxStartTS = JSON.parse(chaosArray[index].data)['ts'];
 							}
@@ -392,16 +389,16 @@
 					let recentData = JSON.parse(chaosArray[maxIndex].data);
 
 					// console.log(JSON.parse(chaosArray[maxIndex].data)['type']);
-					if(recentData['type']=='START_MATCH'|| recentData['type']=='SCORE_UPDATE'){
+					if (recentData['type'] == 'START_MATCH' || recentData['type'] == 'SCORE_UPDATE') {
 						data = JSON.parse(chaosArray[maxIndex].data);
-						timer.setTime((Date.now()-maxStartTS)/1000, maxStartTS-Date.now());
+						timer.setTime((Date.now() - maxStartTS) / 1000, maxStartTS - Date.now());
 						state = State.IN_MATCH;
-						matchTimeout = setTimeout(endGame, 158000+maxStartTS-Date.now());
-					}else if(recentData['type']=='SHOW_PREVIEW'||recentData['type']=='SHOW_MATCH'){
+						matchTimeout = setTimeout(endGame, 158000 + maxStartTS - Date.now());
+					} else if (recentData['type'] == 'SHOW_PREVIEW' || recentData['type'] == 'SHOW_MATCH') {
 						data = JSON.parse(chaosArray[maxIndex].data);
 						mode = 'Standby';
 						state = State.AWAIT_MATCH;
-					}else{
+					} else {
 						fieldUpdate(chaosArray[maxIndex]);
 					}
 				}, 1000);
@@ -409,12 +406,9 @@
 			};
 
 			socket.onmessage = (event) => {
-				
-				if (!started) {					
+				if (!started) {
 					chaosArray.push(event);
-				}
-				else
-					fieldUpdate(event);
+				} else fieldUpdate(event);
 			};
 
 			socket.onclose = () => {
@@ -447,14 +441,18 @@
 		beforeTeleop = true;
 		mode = 'Standby';
 		state = State.AWAIT_MATCH;
-		console.log('DEBUG INFO','prior:'+oldState,'post: '+ parseState(state), 'type: showMethod');
-
+		console.log(
+			'DEBUG INFO',
+			'prior:' + oldState,
+			'post: ' + parseState(state),
+			'type: showMethod'
+		);
 	};
 
 	let startMatch = (field: number) => {
 		let oldState = parseState(state);
 		beforeTeleop = true;
-		
+
 		timer.reset();
 		timer.start();
 		resultsData = undefined;
@@ -464,8 +462,12 @@
 		}
 		matchTimeout = setTimeout(endGame, 158000);
 		state = State.IN_MATCH;
-		console.log('DEBUG INFO','prior:'+oldState,'post: '+ parseState(state), 'type: startMethod');
-
+		console.log(
+			'DEBUG INFO',
+			'prior:' + oldState,
+			'post: ' + parseState(state),
+			'type: startMethod'
+		);
 	};
 
 	function fieldUpdate(message: MessageEvent) {
@@ -481,10 +483,10 @@
 						if (type == 'SHOW_PREVIEW' || type == 'SHOW_MATCH') {
 							showMatch();
 							data = JSON.parse(message.data);
-						} else if (type == 'START_MATCH'||type == 'SCORE_UPDATE') {
+						} else if (type == 'START_MATCH' || type == 'SCORE_UPDATE') {
 							startMatch(field);
 							data = JSON.parse(message.data);
-						}else if (type == 'SHOW_RESULTS') {
+						} else if (type == 'SHOW_RESULTS') {
 							state = State.RESULTS_SHOWN;
 							resultsTimeout = setTimeout(closeResults, 20000);
 						}
@@ -552,20 +554,14 @@
 
 							resultsState = ResultsState.FULL_RESULTS;
 							showFullResults = true;
-						} else if (
-							state == State.AWAIT_MATCH ||
-							state == State.IN_MATCH
-						) {
+						} else if (state == State.AWAIT_MATCH || state == State.IN_MATCH) {
 							awaitMini = true;
 							resultsState = ResultsState.AWAIT_MINI;
 						}
 						break;
 
 					case ResultsState.FULL_RESULTS:
-						if (
-							state == State.AWAIT_MATCH ||
-							state == State.IN_MATCH
-						) {
+						if (state == State.AWAIT_MATCH || state == State.IN_MATCH) {
 							showFullResults = false;
 							resultsState = ResultsState.NO_RESULTS;
 						}
@@ -592,7 +588,12 @@
 						}
 						break;
 				}
-				console.log('DEBUG INFO','prior:'+oldState,'post: '+ parseState(state), 'type: '+type);
+				console.log(
+					'DEBUG INFO',
+					'prior:' + oldState,
+					'post: ' + parseState(state),
+					'type: ' + type
+				);
 			}
 		} catch (e) {
 			// console.error(e);
