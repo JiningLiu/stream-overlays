@@ -1,6 +1,8 @@
 # FTC Stream Overlays
 
-For use with the [stream-cam](https://github.com/JiningLiu/stream-cam/) project and official [FTCLive](https://github.com/FIRST-Tech-Challenge/scorekeeper) scoring system.
+> ⚠️ Deprecated. Replacement product coming soon @ [JiningLiu/stream-cam-ftc](https://github.com/JiningLiu/stream-cam-ftc/)
+
+For use with the [stream-cam-legacy](https://github.com/JiningLiu/stream-cam-legacy/) project and official [FTCLive](https://github.com/FIRST-Tech-Challenge/scorekeeper) scoring system.
 
 ## Developing
 
