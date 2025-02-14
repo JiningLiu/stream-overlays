@@ -4,9 +4,11 @@
 	let { text = 'Welcome' } = $props();
 
 	$effect(() => {
-		const element = document.querySelector('#infoBanner') as HTMLHeadingElement;
+		if (text.includes('Upcoming Match ')) return;
+
+		const element = document.querySelector('overlay #infoBanner') as HTMLHeadingElement;
 		if (element) {
-			element.style.setProperty('--char-count', text.length.toString());
+			element.style.setProperty('--size-modifier', String(Math.sqrt(text.length) * 2.5));
 		}
 	});
 </script>
@@ -32,7 +34,7 @@
 
 	h4 {
 		max-width: 34vw;
-		font-size: clamp(0.9vw, calc(34vw / var(--char-count, 16) * 2), 1.4vw);
+		font-size: clamp(0.8vw, calc(22.4vw / var(--size-modifier, 16)), 1.4vw);
 		font-weight: 500;
 		text-align: center;
 	}
