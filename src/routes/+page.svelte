@@ -548,7 +548,7 @@
 						}
 						break;
 					case State.AWAIT_MATCH:
-						if(type != 'SHOW_PREVIEW' && type != 'SHOW_RESULTS' && field == current) {
+						if(type != 'SHOW_PREVIEW' && type != 'SHOW_RESULTS' && type != 'SCORE_UPDATE') {
 							data = JSON.parse(message.data);
 						}
 						if (type == 'START_MATCH') {

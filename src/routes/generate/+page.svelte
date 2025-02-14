@@ -76,6 +76,7 @@
 		updateCam();
 		updateOverlay();
 
+
 		document.querySelectorAll('input.cam').forEach((input) => {
 			input.addEventListener('keydown', (event) => {
 				const keyboardEvent = event as KeyboardEvent;
@@ -107,7 +108,7 @@
 	});
 
 	function updateCam() {
-		camUrl = `http://${encodeURIComponent(camHost)}:${encodeURIComponent(camPort)}/${encodeURIComponent(
+		camUrl = `http://${encodeURIComponent(camHost)}:${(camPort)}/${encodeURIComponent(
 			camPath
 		)}`;
 		const camFrame = document.getElementById('cam') as HTMLIFrameElement;
